@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenneth's Study Hub</title>
+    
+    <!-- FullCalendar CSS -->
+    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+    
+    <!-- Marked.js for Markdown rendering -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- FullCalendar JS -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary-color: #06b6d4;
+            --background: #f8fafc;
+            --surface: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: var(--surface);
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 400px;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-header h1 {
+            color: var(--primary-color);
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:disabled {
+            background: var(--text-secondary);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: var(--danger);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Main App Styles */
+        .app-container {
+            display: none;
+            background: var(--background);
+            min-height: 100vh;
+        }
+
+        .app-container.show {
+            display: block;
+        }
+
+        /* Header/Navbar */
+        .navbar {
+            background: var(--surface);
+            box-shadow: var(--shadow);
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .navbar-user {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .admin-badge {
+            background: var(--warning);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: #dc2626;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .tab:hover {
+            color: var(--primary-color);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        /* Study Sheets Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            color: var(--text-primary);
+        }
+
+        .btn-add {
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-add:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .study-sheets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .study-sheet-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .study-sheet-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .sheet-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .sheet-subject {
+            display: inline-block;
+            padding: 4px 12px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .sheet-content {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.6;
+            max-height: 100px;
+            overflow: hidden;
+        }
+
+        .sheet-meta {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Calendar Section */
+        #calendar {
+            background: var(--surface);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: var(--text-primary);
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-close:hover {
+            background: var(--border-color);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .btn-secondary {
+            padding: 10px 20px;
+            background: var(--border-color);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        /* Sheet View Modal */
+        .sheet-view-content {
+            line-height: 1.8;
+        }
+
+        .sheet-view-content h1,
+        .sheet-view-content h2,
+        .sheet-view-content h3 {
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .sheet-view-content p {
+            margin-bottom: 16px;
+        }
+
+        .sheet-view-content code {
+            background: var(--background);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .sheet-view-content pre {
+            background: var(--background);
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+
+        .sheet-view-content ul,
+        .sheet-view-content ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .navbar-content {
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .study-sheets-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .read-only-notice {
+            background: #fef3c7;
+            color: #92400e;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-form-group {
+            margin-bottom: 20px;
+        }
+
+        .event-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .event-form-group input,
+        .event-form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .event-form-group input:focus,
+        .event-form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1>📚 Kenneth's Study Hub</h1>
+                <p id="authSubtitle">Sign in to access your study materials</p>
+            </div>
+            
+            <div id="loginError" class="error-message"></div>
+            
+            <form id="authForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required minlength="6">
+                </div>
+                
+                <button type="submit" class="btn btn-primary" id="authBtn">
+                    Sign In
+                </button>
+            </form>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: var(--text-secondary); font-size: 14px;">
+                    <span id="toggleAuthText">Don't have an account?</span>
+                    <button id="toggleAuthMode" style="background: none; border: none; color: var(--primary-color); font-weight: 600; cursor: pointer; text-decoration: underline;">
+                        Sign Up
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="appContainer" class="app-container">
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <div class="navbar-brand">📚 Kenneth's Study Hub</div>
+                <div class="navbar-user">
+                    <div class="user-info">
+                        <div class="user-name" id="userName"></div>
+                        <div class="user-role" id="userRole"></div>
+                    </div>
+                    <button class="btn-logout" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="study-sheets">Study Sheets</button>
+                <button class="tab" data-tab="calendar">Calendar</button>
+            </div>
+
+            <!-- Study Sheets Tab -->
+            <div id="study-sheets" class="tab-content active">
+                <div id="readOnlyNotice" class="read-only-notice" style="display: none;">
+                    ℹ️ You have read-only access. Only admins can create or edit study sheets.
+                </div>
+                
+                <div class="section-header">
+                    <h2>Study Sheets</h2>
+                    <button class="btn-add" id="addSheetBtn" style="display: none;">+ New Sheet</button>
+                </div>
+                
+                <div class="study-sheets-grid" id="studySheetsGrid">
+                    <!-- Study sheets will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Calendar Tab -->
+            <div id="calendar-tab" class="tab-content">
+                <div id="calendarReadOnlyNotice" class="read-only-notice" style="display: none;">
+                    ℹ️ You have read-only access. Only admins can create or edit calendar events.
+                </div>
+                
+                <div id="calendar"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Study Sheet Modal (Add/Edit) -->
+    <div id="sheetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="sheetModalTitle">New Study Sheet</h3>
+                <button class="btn-close" id="closeSheetModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="sheetForm">
+                    <div class="form-group">
+                        <label for="sheetTitle">Title</label>
+                        <input type="text" id="sheetTitle" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sheetSubject">Subject</label>
+                        <input type="text" id="sheetSubject" required placeholder="e.g., Mathematics, Biology, History">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sheetContent">Content (Markdown supported)</label>
+                        <textarea id="sheetContent" required placeholder="# Heading
+## Subheading
+- Bullet point
+**Bold text**
+*Italic text*"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSheetBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveSheetBtn">Save Sheet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Study Sheet View Modal -->
+    <div id="viewSheetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="viewSheetTitle"></h3>
+                <button class="btn-close" id="closeViewSheetModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="viewSheetSubject"></div>
+                <div id="viewSheetContent" class="sheet-view-content"></div>
+                <div id="viewSheetMeta" class="sheet-meta"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="editSheetBtn" style="display: none;">Edit</button>
+                <button class="btn btn-secondary" id="closeViewBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Modal (Add/Edit) -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="eventModalTitle">New Event</h3>
+                <button class="btn-close" id="closeEventModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <div class="event-form-group">
+                        <label for="eventTitle">Event Title</label>
+                        <input type="text" id="eventTitle" required>
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventType">Event Type</label>
+                        <select id="eventType" required>
+                            <option value="deadline">Study Deadline</option>
+                            <option value="exam">Exam</option>
+                            <option value="assignment">Assignment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventStart">Start Date & Time</label>
+                        <input type="datetime-local" id="eventStart" required>
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventEnd">End Date & Time</label>
+                        <input type="datetime-local" id="eventEnd">
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventDescription">Description (optional)</label>
+                        <textarea id="eventDescription" style="min-height: 100px;"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEventBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveEventBtn">Save Event</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Supabase Configuration
+        const SUPABASE_URL = 'YOUR_SUPABASE_URL';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        // Global State
+        let currentUser = null;
+        let isAdmin = false;
+        let calendar = null;
+        let currentEditingSheet = null;
+        let currentEditingEvent = null;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', async () => {
+            await checkAuth();
+            setupEventListeners();
+        });
+
+        // Auth Functions
+        async function checkAuth() {
+            const { data: { session } } = await supabase.auth.getSession();
+            
+            if (session) {
+                currentUser = session.user;
+                await loadUserProfile();
+                showApp();
+            } else {
+                showLogin();
+            }
+        }
+
+        async function loadUserProfile() {
+            const { data, error } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', currentUser.id)
+                .single();
+
+            if (data) {
+                isAdmin = data.is_admin || false;
+                updateUserUI();
+            }
+        }
+
+        function updateUserUI() {
+            document.getElementById('userName').textContent = currentUser.email;
+            const roleElement = document.getElementById('userRole');
+            
+            if (isAdmin) {
+                roleElement.innerHTML = '<span class="admin-badge">ADMIN</span>';
+                document.getElementById('addSheetBtn').style.display = 'block';
+                document.getElementById('readOnlyNotice').style.display = 'none';
+                document.getElementById('calendarReadOnlyNotice').style.display = 'none';
+            } else {
+                roleElement.textContent = 'Student (Read-Only)';
+                document.getElementById('readOnlyNotice').style.display = 'flex';
+                document.getElementById('calendarReadOnlyNotice').style.display = 'flex';
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('appContainer').classList.remove('show');
+        }
+
+        function showApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('appContainer').classList.add('show');
+            loadStudySheets();
+            initCalendar();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            // Login
+            document.getElementById('authForm').addEventListener('submit', handleAuth);
+            document.getElementById('toggleAuthMode').addEventListener('click', toggleAuthMode);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
+            // Tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+
+            // Study Sheets
+            document.getElementById('addSheetBtn').addEventListener('click', () => openSheetModal());
+            document.getElementById('closeSheetModal').addEventListener('click', closeSheetModal);
+            document.getElementById('cancelSheetBtn').addEventListener('click', closeSheetModal);
+            document.getElementById('saveSheetBtn').addEventListener('click', saveStudySheet);
+            
+            // View Sheet Modal
+            document.getElementById('closeViewSheetModal').addEventListener('click', closeViewSheetModal);
+            document.getElementById('closeViewBtn').addEventListener('click', closeViewSheetModal);
+            document.getElementById('editSheetBtn').addEventListener('click', editCurrentSheet);
+
+            // Event Modal
+            document.getElementById('closeEventModal').addEventListener('click', closeEventModal);
+            document.getElementById('cancelEventBtn').addEventListener('click', closeEventModal);
+            document.getElementById('saveEventBtn').addEventListener('click', saveCalendarEvent);
+        }
+
+        // Auth State
+        let isSignupMode = false;
+
+        // Toggle between login and signup
+        function toggleAuthMode() {
+            isSignupMode = !isSignupMode;
+            const authBtn = document.getElementById('authBtn');
+            const authSubtitle = document.getElementById('authSubtitle');
+            const toggleText = document.getElementById('toggleAuthText');
+            const toggleBtn = document.getElementById('toggleAuthMode');
+            
+            if (isSignupMode) {
+                authBtn.textContent = 'Sign Up';
+                authSubtitle.textContent = 'Create your account to get started';
+                toggleText.textContent = 'Already have an account?';
+                toggleBtn.textContent = 'Sign In';
+            } else {
+                authBtn.textContent = 'Sign In';
+                authSubtitle.textContent = 'Sign in to access your study materials';
+                toggleText.textContent = "Don't have an account?";
+                toggleBtn.textContent = 'Sign Up';
+            }
+            
+            document.getElementById('loginError').classList.remove('show');
+        }
+
+        // Unified Auth Handler
+        async function handleAuth(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const authBtn = document.getElementById('authBtn');
+            const errorDiv = document.getElementById('loginError');
+            
+            authBtn.disabled = true;
+            authBtn.innerHTML = '<span class="loading"></span>';
+            errorDiv.classList.remove('show');
+            
+            let result;
+            
+            if (isSignupMode) {
+                // Sign up
+                result = await supabase.auth.signUp({
+                    email,
+                    password
+                });
+                
+                if (result.error) {
+                    errorDiv.textContent = result.error.message;
+                    errorDiv.classList.add('show');
+                    authBtn.disabled = false;
+                    authBtn.textContent = 'Sign Up';
+                } else {
+                    // Check if email confirmation is required
+                    if (result.data?.user?.identities?.length === 0) {
+                        errorDiv.textContent = 'An account with this email already exists. Please sign in instead.';
+                        errorDiv.classList.add('show');
+                        authBtn.disabled = false;
+                        authBtn.textContent = 'Sign Up';
+                    } else if (result.data.session) {
+                        // Auto-login after signup
+                        currentUser = result.data.user;
+                        await loadUserProfile();
+                        showApp();
+                    } else {
+                        // Email confirmation required
+                        errorDiv.style.background = '#d1fae5';
+                        errorDiv.style.color = '#065f46';
+                        errorDiv.textContent = 'Success! Please check your email to confirm your account, then sign in.';
+                        errorDiv.classList.add('show');
+                        authBtn.disabled = false;
+                        authBtn.textContent = 'Sign Up';
+                        
+                        // Switch to login mode after 3 seconds
+                        setTimeout(() => {
+                            if (isSignupMode) {
+                                toggleAuthMode();
+                            }
+                        }, 3000);
+                    }
+                }
+            } else {
+                // Sign in
+                result = await supabase.auth.signInWithPassword({
+                    email,
+                    password
+                });
+                
+                if (result.error) {
+                    errorDiv.textContent = result.error.message;
+                    errorDiv.classList.add('show');
+                    authBtn.disabled = false;
+                    authBtn.textContent = 'Sign In';
+                } else {
+                    currentUser = result.data.user;
+                    await loadUserProfile();
+                    showApp();
+                }
+            }
+        }
+
+        // Logout Handler
+        async function handleLogout() {
+            await supabase.auth.signOut();
+            currentUser = null;
+            isAdmin = false;
+            showLogin();
+        }
+
+        // Tab Switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName === 'study-sheets' ? 'study-sheets' : 'calendar-tab').classList.add('active');
+            
+            if (tabName === 'calendar' && calendar) {
+                setTimeout(() => calendar.updateSize(), 100);
+            }
+        }
+
+        // Study Sheets Functions
+        async function loadStudySheets() {
+            const { data, error } = await supabase
+                .from('study_sheets')
+                .select('*')
+                .order('created_at', { ascending: false });
+
+            if (data) {
+                renderStudySheets(data);
+            }
+        }
+
+        function renderStudySheets(sheets) {
+            const grid = document.getElementById('studySheetsGrid');
+            
+            if (sheets.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-secondary); text-align: center; grid-column: 1/-1;">No study sheets yet. Create your first one!</p>';
+                return;
+            }
+            
+            grid.innerHTML = sheets.map(sheet => `
+                <div class="study-sheet-card" onclick="viewStudySheet('${sheet.id}')">
+                    <div class="sheet-header">
+                        <div>
+                            <div class="sheet-title">${escapeHtml(sheet.title)}</div>
+                            <span class="sheet-subject">${escapeHtml(sheet.subject)}</span>
+                        </div>
+                    </div>
+                    <div class="sheet-content">
+                        ${sheet.content.substring(0, 150)}${sheet.content.length > 150 ? '...' : ''}
+                    </div>
+                    <div class="sheet-meta">
+                        Created: ${new Date(sheet.created_at).toLocaleDateString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function viewStudySheet(sheetId) {
+            const { data, error } = await supabase
+                .from('study_sheets')
+                .select('*')
+                .eq('id', sheetId)
+                .single();
+
+            if (data) {
+                document.getElementById('viewSheetTitle').textContent = data.title;
+                document.getElementById('viewSheetSubject').innerHTML = `<span class="sheet-subject">${escapeHtml(data.subject)}</span>`;
+                document.getElementById('viewSheetContent').innerHTML = marked.parse(data.content);
+                document.getElementById('viewSheetMeta').innerHTML = `
+                    <strong>Created:</strong> ${new Date(data.created_at).toLocaleString()}<br>
+                    <strong>Last Updated:</strong> ${new Date(data.updated_at).toLocaleString()}
+                `;
+                
+                currentEditingSheet = data;
+                
+                if (isAdmin) {
+                    document.getElementById('editSheetBtn').style.display = 'block';
+                } else {
+                    document.getElementById('editSheetBtn').style.display = 'none';
+                }
+                
+                document.getElementById('viewSheetModal').classList.add('show');
+            }
+        }
+
+        function editCurrentSheet() {
+            closeViewSheetModal();
+            openSheetModal(currentEditingSheet);
+        }
+
+        function openSheetModal(sheet = null) {
+            currentEditingSheet = sheet;
+            
+            if (sheet) {
+                document.getElementById('sheetModalTitle').textContent = 'Edit Study Sheet';
+                document.getElementById('sheetTitle').value = sheet.title;
+                document.getElementById('sheetSubject').value = sheet.subject;
+                document.getElementById('sheetContent').value = sheet.content;
+            } else {
+                document.getElementById('sheetModalTitle').textContent = 'New Study Sheet';
+                document.getElementById('sheetForm').reset();
+            }
+            
+            document.getElementById('sheetModal').classList.add('show');
+        }
+
+        function closeSheetModal() {
+            document.getElementById('sheetModal').classList.remove('show');
+            currentEditingSheet = null;
+        }
+
+        function closeViewSheetModal() {
+            document.getElementById('viewSheetModal').classList.remove('show');
+            currentEditingSheet = null;
+        }
+
+        async function saveStudySheet() {
+            if (!isAdmin) {
+                alert('Only admins can create or edit study sheets.');
+                return;
+            }
+
+            const title = document.getElementById('sheetTitle').value;
+            const subject = document.getElementById('sheetSubject').value;
+            const content = document.getElementById('sheetContent').value;
+
+            const sheetData = {
+                title,
+                subject,
+                content,
+                author_id: currentUser.id
+            };
+
+            let result;
+            if (currentEditingSheet) {
+                result = await supabase
+                    .from('study_sheets')
+                    .update(sheetData)
+                    .eq('id', currentEditingSheet.id);
+            } else {
+                result = await supabase
+                    .from('study_sheets')
+                    .insert([sheetData]);
+            }
+
+            if (!result.error) {
+                closeSheetModal();
+                loadStudySheets();
+            } else {
+                alert('Error saving study sheet: ' + result.error.message);
+            }
+        }
+
+        // Calendar Functions
+        function initCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,listWeek'
+                },
+                editable: isAdmin,
+                selectable: isAdmin,
+                selectMirror: true,
+                dayMaxEvents: true,
+                events: loadCalendarEvents,
+                select: handleDateSelect,
+                eventClick: handleEventClick,
+                eventColor: '#4f46e5'
+            });
+            
+            calendar.render();
+        }
+
+        async function loadCalendarEvents(info, successCallback, failureCallback) {
+            const { data, error } = await supabase
+                .from('calendar_events')
+                .select('*');
+
+            if (data) {
+                const events = data.map(event => ({
+                    id: event.id,
+                    title: event.title,
+                    start: event.start_date,
+                    end: event.end_date,
+                    description: event.description,
+                    extendedProps: {
+                        type: event.event_type
+                    },
+                    backgroundColor: getEventColor(event.event_type)
+                }));
+                successCallback(events);
+            } else {
+                failureCallback(error);
+            }
+        }
+
+        function getEventColor(type) {
+            const colors = {
+                'exam': '#ef4444',
+                'deadline': '#f59e0b',
+                'assignment': '#06b6d4',
+                'other': '#8b5cf6'
+            };
+            return colors[type] || '#4f46e5';
+        }
+
+        function handleDateSelect(selectInfo) {
+            if (!isAdmin) {
+                alert('Only admins can create calendar events.');
+                calendar.unselect();
+                return;
+            }
+            
+            currentEditingEvent = null;
+            document.getElementById('eventModalTitle').textContent = 'New Event';
+            document.getElementById('eventForm').reset();
+            document.getElementById('eventStart').value = selectInfo.startStr.substring(0, 16);
+            document.getElementById('eventEnd').value = selectInfo.endStr ? selectInfo.endStr.substring(0, 16) : '';
+            document.getElementById('eventModal').classList.add('show');
+            
+            calendar.unselect();
+        }
+
+        function handleEventClick(clickInfo) {
+            if (!isAdmin) {
+                alert(`${clickInfo.event.title}\n\n${clickInfo.event.extendedProps.description || 'No description'}`);
+                return;
+            }
+
+            if (confirm(`Edit or delete "${clickInfo.event.title}"?\n\nOK to edit, Cancel to delete`)) {
+                // Edit event
+                currentEditingEvent = clickInfo.event;
+                document.getElementById('eventModalTitle').textContent = 'Edit Event';
+                document.getElementById('eventTitle').value = clickInfo.event.title;
+                document.getElementById('eventType').value = clickInfo.event.extendedProps.type;
+                document.getElementById('eventStart').value = clickInfo.event.startStr.substring(0, 16);
+                document.getElementById('eventEnd').value = clickInfo.event.end ? clickInfo.event.endStr.substring(0, 16) : '';
+                document.getElementById('eventDescription').value = clickInfo.event.extendedProps.description || '';
+                document.getElementById('eventModal').classList.add('show');
+            } else {
+                // Delete event
+                deleteCalendarEvent(clickInfo.event);
+            }
+        }
+
+        async function saveCalendarEvent() {
+            if (!isAdmin) {
+                alert('Only admins can create or edit calendar events.');
+                return;
+            }
+
+            const title = document.getElementById('eventTitle').value;
+            const type = document.getElementById('eventType').value;
+            const start = document.getElementById('eventStart').value;
+            const end = document.getElementById('eventEnd').value;
+            const description = document.getElementById('eventDescription').value;
+
+            const eventData = {
+                title,
+                event_type: type,
+                start_date: start,
+                end_date: end || start,
+                description,
+                author_id: currentUser.id
+            };
+
+            let result;
+            if (currentEditingEvent) {
+                result = await supabase
+                    .from('calendar_events')
+                    .update(eventData)
+                    .eq('id', currentEditingEvent.id);
+            } else {
+                result = await supabase
+                    .from('calendar_events')
+                    .insert([eventData]);
+            }
+
+            if (!result.error) {
+                closeEventModal();
+                calendar.refetchEvents();
+            } else {
+                alert('Error saving event: ' + result.error.message);
+            }
+        }
+
+        async function deleteCalendarEvent(event) {
+            const { error } = await supabase
+                .from('calendar_events')
+                .delete()
+                .eq('id', event.id);
+
+            if (!error) {
+                event.remove();
+            } else {
+                alert('Error deleting event: ' + error.message);
+            }
+        }
+
+        function closeEventModal() {
+            document.getElementById('eventModal').classList.remove('show');
+            currentEditingEvent = null;
+        }
+
+        // Utility Functions
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+    </script>
+</body>
+</html>
