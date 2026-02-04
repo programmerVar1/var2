@@ -1082,4 +1082,620 @@
                 <form id="sheetForm">
                     <div class="form-group">
                         <label for="sheetTitle">Title</label>
-                        <input type="text" id="sheetTitle" req
+                        <input type="text" id="sheetTitle" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sheetSubject">Subject</label>
+                        <input type="text" id="sheetSubject" required placeholder="e.g., Mathematics, Biology, History">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sheetContent">Content (Markdown supported)</label>
+                        <textarea id="sheetContent" required placeholder="# Heading
+## Subheading
+- Bullet point
+**Bold text**
+*Italic text*"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSheetBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveSheetBtn">Save Sheet</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Study Sheet View Modal -->
+    <div id="viewSheetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="viewSheetTitle"></h3>
+                <button class="btn-close" id="closeViewSheetModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="viewSheetSubject"></div>
+                <div id="viewSheetContent" class="sheet-view-content"></div>
+                <div id="viewSheetMeta" class="sheet-meta"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="editSheetBtn" style="display: none;">Edit</button>
+                <button class="btn btn-secondary" id="closeViewBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Modal (Add/Edit) -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="eventModalTitle">New Event</h3>
+                <button class="btn-close" id="closeEventModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <div class="event-form-group">
+                        <label for="eventTitle">Event Title</label>
+                        <input type="text" id="eventTitle" required>
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventType">Event Type</label>
+                        <select id="eventType" required>
+                            <option value="deadline">Study Deadline</option>
+                            <option value="exam">Exam</option>
+                            <option value="assignment">Assignment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventStart">Start Date & Time</label>
+                        <input type="datetime-local" id="eventStart" required>
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventEnd">End Date & Time</label>
+                        <input type="datetime-local" id="eventEnd">
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventDescription">Description (optional)</label>
+                        <textarea id="eventDescription" style="min-height: 100px;"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEventBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveEventBtn">Save Event</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Your Firebase config
+        const firebaseConfig = {
+          apiKey: "AIzaSyBoI0n09vJ7dn0-Jb91m8l4aGtPZYtwGiM",
+          authDomain: "usernames-b9488.firebaseapp.com",
+          projectId: "usernames-b9488",
+          storageBucket: "usernames-b9488.firebasestorage.app",
+          messagingSenderId: "902486022937",
+          appId: "1:902486022937:web:b1c0e5df3b9bf3123cc388",
+          measurementId: "G-HZD5CN8963"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Global State
+        let currentUser = null;
+        let isAdmin = false;
+        let calendar = null;
+        let currentEditingSheet = null;
+        let currentEditingEvent = null;
+        let isSignupMode = false;
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            setupAuthListener();
+            setupEventListeners();
+        });
+
+        // Auth Listener
+        function setupAuthListener() {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    await loadUserProfile();
+                    showApp();
+                } else {
+                    currentUser = null;
+                    isAdmin = false;
+                    showLogin();
+                }
+            });
+        }
+
+        async function loadUserProfile() {
+            const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+            
+            if (userDoc.exists()) {
+                isAdmin = userDoc.data().is_admin || false;
+            } else {
+                // Create user profile if it doesn't exist
+                await setDoc(doc(db, 'users', currentUser.uid), {
+                    email: currentUser.email,
+                    is_admin: false,
+                    created_at: new Date().toISOString()
+                });
+                isAdmin = false;
+            }
+            
+            updateUserUI();
+        }
+
+        function updateUserUI() {
+            document.getElementById('userName').textContent = currentUser.email;
+            const roleElement = document.getElementById('userRole');
+            
+            if (isAdmin) {
+                roleElement.innerHTML = '<span class="admin-badge">ADMIN</span>';
+                document.getElementById('addSheetBtn').style.display = 'block';
+                document.getElementById('readOnlyNotice').style.display = 'none';
+                document.getElementById('calendarReadOnlyNotice').style.display = 'none';
+            } else {
+                roleElement.textContent = 'Student (Read-Only)';
+                document.getElementById('readOnlyNotice').style.display = 'flex';
+                document.getElementById('calendarReadOnlyNotice').style.display = 'flex';
+            }
+        }
+
+        function showLogin() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('appContainer').classList.remove('show');
+        }
+
+        function showApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('appContainer').classList.add('show');
+            loadStudySheets();
+            initCalendar();
+        }
+
+        // Event Listeners
+        function setupEventListeners() {
+            document.getElementById('authForm').addEventListener('submit', handleAuth);
+            document.getElementById('toggleAuthMode').addEventListener('click', toggleAuthMode);
+            document.getElementById('aboutWebsiteBtn').addEventListener('click', toggleAboutContent);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+
+            document.getElementById('addSheetBtn').addEventListener('click', () => openSheetModal());
+            document.getElementById('closeSheetModal').addEventListener('click', closeSheetModal);
+            document.getElementById('cancelSheetBtn').addEventListener('click', closeSheetModal);
+            document.getElementById('saveSheetBtn').addEventListener('click', saveStudySheet);
+            
+            document.getElementById('closeViewSheetModal').addEventListener('click', closeViewSheetModal);
+            document.getElementById('closeViewBtn').addEventListener('click', closeViewSheetModal);
+            document.getElementById('editSheetBtn').addEventListener('click', editCurrentSheet);
+
+            document.getElementById('closeEventModal').addEventListener('click', closeEventModal);
+            document.getElementById('cancelEventBtn').addEventListener('click', closeEventModal);
+            document.getElementById('saveEventBtn').addEventListener('click', saveCalendarEvent);
+        }
+
+        function toggleAboutContent() {
+            const aboutContent = document.getElementById('aboutContent');
+            const aboutBtn = document.getElementById('aboutWebsiteBtn');
+            
+            if (aboutContent.style.display === 'none') {
+                aboutContent.style.display = 'block';
+                aboutBtn.textContent = 'Hide About';
+            } else {
+                aboutContent.style.display = 'none';
+                aboutBtn.textContent = 'About Website';
+            }
+        }
+
+        function toggleAuthMode() {
+            isSignupMode = !isSignupMode;
+            const authBtn = document.getElementById('authBtn');
+            const authSubtitle = document.getElementById('authSubtitle');
+            const toggleText = document.getElementById('toggleAuthText');
+            const toggleBtn = document.getElementById('toggleAuthMode');
+            
+            if (isSignupMode) {
+                authBtn.textContent = 'Sign Up';
+                authSubtitle.textContent = 'Create your account to get started';
+                toggleText.textContent = 'Already have an account?';
+                toggleBtn.textContent = 'Sign In';
+            } else {
+                authBtn.textContent = 'Sign In';
+                authSubtitle.textContent = 'Sign in to access your study materials';
+                toggleText.textContent = "Don't have an account?";
+                toggleBtn.textContent = 'Sign Up';
+            }
+            
+            document.getElementById('loginError').classList.remove('show');
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const authBtn = document.getElementById('authBtn');
+            const errorDiv = document.getElementById('loginError');
+            
+            authBtn.disabled = true;
+            authBtn.innerHTML = '<span class="loading"></span>';
+            errorDiv.classList.remove('show');
+            
+            try {
+                if (isSignupMode) {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.add('show');
+                authBtn.disabled = false;
+                authBtn.textContent = isSignupMode ? 'Sign Up' : 'Sign In';
+            }
+        }
+
+        async function handleLogout() {
+            await signOut(auth);
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName === 'study-sheets' ? 'study-sheets' : 'calendar-tab').classList.add('active');
+            
+            if (tabName === 'calendar' && calendar) {
+                setTimeout(() => calendar.updateSize(), 100);
+            }
+        }
+
+        // Study Sheets Functions
+        async function loadStudySheets() {
+            const q = query(collection(db, 'study_sheets'), orderBy('created_at', 'desc'));
+            const querySnapshot = await getDocs(q);
+            
+            const sheets = [];
+            querySnapshot.forEach((doc) => {
+                sheets.push({ id: doc.id, ...doc.data() });
+            });
+            
+            renderStudySheets(sheets);
+        }
+
+        function renderStudySheets(sheets) {
+            const grid = document.getElementById('studySheetsGrid');
+            
+            if (sheets.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-secondary); text-align: center; grid-column: 1/-1;">No study sheets yet. Create your first one!</p>';
+                return;
+            }
+            
+            grid.innerHTML = sheets.map(sheet => `
+                <div class="study-sheet-card" onclick="window.viewStudySheet('${sheet.id}')">
+                    <div class="sheet-header">
+                        <div>
+                            <div class="sheet-title">${escapeHtml(sheet.title)}</div>
+                            <span class="sheet-subject">${escapeHtml(sheet.subject)}</span>
+                        </div>
+                    </div>
+                    <div class="sheet-content">
+                        ${sheet.content.substring(0, 150)}${sheet.content.length > 150 ? '...' : ''}
+                    </div>
+                    <div class="sheet-meta">
+                        Created: ${new Date(sheet.created_at).toLocaleDateString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.viewStudySheet = async function(sheetId) {
+            const docSnap = await getDoc(doc(db, 'study_sheets', sheetId));
+
+            if (docSnap.exists()) {
+                const data = { id: docSnap.id, ...docSnap.data() };
+                document.getElementById('viewSheetTitle').textContent = data.title;
+                document.getElementById('viewSheetSubject').innerHTML = `<span class="sheet-subject">${escapeHtml(data.subject)}</span>`;
+                document.getElementById('viewSheetContent').innerHTML = marked.parse(data.content);
+                document.getElementById('viewSheetMeta').innerHTML = `
+                    <strong>Created:</strong> ${new Date(data.created_at).toLocaleString()}<br>
+                    <strong>Last Updated:</strong> ${new Date(data.updated_at).toLocaleString()}
+                `;
+                
+                currentEditingSheet = data;
+                
+                if (isAdmin) {
+                    document.getElementById('editSheetBtn').style.display = 'block';
+                } else {
+                    document.getElementById('editSheetBtn').style.display = 'none';
+                }
+                
+                document.getElementById('viewSheetModal').classList.add('show');
+            }
+        }
+
+        function editCurrentSheet() {
+            closeViewSheetModal();
+            openSheetModal(currentEditingSheet);
+        }
+
+        function openSheetModal(sheet = null) {
+            currentEditingSheet = sheet;
+            
+            if (sheet) {
+                document.getElementById('sheetModalTitle').textContent = 'Edit Study Sheet';
+                document.getElementById('sheetTitle').value = sheet.title;
+                document.getElementById('sheetSubject').value = sheet.subject;
+                document.getElementById('sheetContent').value = sheet.content;
+            } else {
+                document.getElementById('sheetModalTitle').textContent = 'New Study Sheet';
+                document.getElementById('sheetForm').reset();
+            }
+            
+            document.getElementById('sheetModal').classList.add('show');
+        }
+
+        function closeSheetModal() {
+            document.getElementById('sheetModal').classList.remove('show');
+            currentEditingSheet = null;
+        }
+
+        function closeViewSheetModal() {
+            document.getElementById('viewSheetModal').classList.remove('show');
+            currentEditingSheet = null;
+        }
+
+        async function saveStudySheet() {
+            if (!isAdmin) {
+                alert('Only admins can create or edit study sheets.');
+                return;
+            }
+
+            const title = document.getElementById('sheetTitle').value;
+            const subject = document.getElementById('sheetSubject').value;
+            const content = document.getElementById('sheetContent').value;
+
+            const sheetData = {
+                title,
+                subject,
+                content,
+                author_id: currentUser.uid,
+                updated_at: new Date().toISOString()
+            };
+
+            try {
+                if (currentEditingSheet) {
+                    await updateDoc(doc(db, 'study_sheets', currentEditingSheet.id), sheetData);
+                } else {
+                    sheetData.created_at = new Date().toISOString();
+                    await addDoc(collection(db, 'study_sheets'), sheetData);
+                }
+                closeSheetModal();
+                loadStudySheets();
+            } catch (error) {
+                alert('Error saving study sheet: ' + error.message);
+            }
+        }
+
+        // Calendar Functions
+        function initCalendar() {
+            const calendarEl = document.getElementById('calendar');
+            
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,listWeek'
+                },
+                editable: isAdmin,
+                selectable: isAdmin,
+                selectMirror: true,
+                dayMaxEvents: true,
+                events: loadCalendarEvents,
+                select: handleDateSelect,
+                eventClick: handleEventClick,
+                eventColor: '#4f46e5'
+            });
+            
+            calendar.render();
+        }
+
+        async function loadCalendarEvents(info, successCallback, failureCallback) {
+            try {
+                const querySnapshot = await getDocs(collection(db, 'calendar_events'));
+                
+                const events = [];
+                querySnapshot.forEach((doc) => {
+                    const event = doc.data();
+                    events.push({
+                        id: doc.id,
+                        title: event.title,
+                        start: event.start_date,
+                        end: event.end_date,
+                        description: event.description,
+                        extendedProps: {
+                            type: event.event_type
+                        },
+                        backgroundColor: getEventColor(event.event_type)
+                    });
+                });
+                successCallback(events);
+            } catch (error) {
+                failureCallback(error);
+            }
+        }
+
+        function getEventColor(type) {
+            const colors = {
+                'exam': '#ef4444',
+                'deadline': '#f59e0b',
+                'assignment': '#06b6d4',
+                'other': '#8b5cf6'
+            };
+            return colors[type] || '#4f46e5';
+        }
+
+        function handleDateSelect(selectInfo) {
+            if (!isAdmin) {
+                alert('Only admins can create calendar events.');
+                calendar.unselect();
+                return;
+            }
+            
+            currentEditingEvent = null;
+            document.getElementById('eventModalTitle').textContent = 'New Event';
+            document.getElementById('eventForm').reset();
+            document.getElementById('eventStart').value = selectInfo.startStr.substring(0, 16);
+            document.getElementById('eventEnd').value = selectInfo.endStr ? selectInfo.endStr.substring(0, 16) : '';
+            document.getElementById('eventModal').classList.add('show');
+            
+            calendar.unselect();
+        }
+
+        function handleEventClick(clickInfo) {
+            if (!isAdmin) {
+                alert(`${clickInfo.event.title}\n\n${clickInfo.event.extendedProps.description || 'No description'}`);
+                return;
+            }
+
+            if (confirm(`Edit or delete "${clickInfo.event.title}"?\n\nOK to edit, Cancel to delete`)) {
+                currentEditingEvent = clickInfo.event;
+                document.getElementById('eventModalTitle').textContent = 'Edit Event';
+                document.getElementById('eventTitle').value = clickInfo.event.title;
+                document.getElementById('eventType').value = clickInfo.event.extendedProps.type;
+                document.getElementById('eventStart').value = clickInfo.event.startStr.substring(0, 16);
+                document.getElementById('eventEnd').value = clickInfo.event.end ? clickInfo.event.endStr.substring(0, 16) : '';
+                document.getElementById('eventDescription').value = clickInfo.event.extendedProps.description || '';
+                document.getElementById('eventModal').classList.add('show');
+            } else {
+                deleteCalendarEvent(clickInfo.event);
+            }
+        }
+
+        async function saveCalendarEvent() {
+            if (!isAdmin) {
+                alert('Only admins can create or edit calendar events.');
+                return;
+            }
+
+            const title = document.getElementById('eventTitle').value;
+            const type = document.getElementById('eventType').value;
+            const start = document.getElementById('eventStart').value;
+            const end = document.getElementById('eventEnd').value;
+            const description = document.getElementById('eventDescription').value;
+
+            const eventData = {
+                title,
+                event_type: type,
+                start_date: start,
+                end_date: end || start,
+                description,
+                author_id: currentUser.uid
+            };
+
+            try {
+                if (currentEditingEvent) {
+                    await updateDoc(doc(db, 'calendar_events', currentEditingEvent.id), eventData);
+                } else {
+                    await addDoc(collection(db, 'calendar_events'), eventData);
+                }
+                closeEventModal();
+                calendar.refetchEvents();
+            } catch (error) {
+                alert('Error saving event: ' + error.message);
+            }
+        }
+
+        async function deleteCalendarEvent(event) {
+            try {
+                await deleteDoc(doc(db, 'calendar_events', event.id));
+                event.remove();
+            } catch (error) {
+                alert('Error deleting event: ' + error.message);
+            }
+        }
+
+        function closeEventModal() {
+            document.getElementById('eventModal').classList.remove('show');
+            currentEditingEvent = null;
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, m => map[m]);
+        }
+
+        // Matrix Rain Effect
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const matrix = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
+        const chars = matrix.split('');
+
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+
+        const drops = [];
+        for (let i = 0; i < columns; i++) {
+            drops[i] = Math.random() * -100;
+        }
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#3ecf8e';
+            ctx.font = fontSize + 'px monospace';
+
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 35);
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
