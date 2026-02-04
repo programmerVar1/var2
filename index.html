@@ -249,358 +249,390 @@
 
         .btn-primary:hover {
             background: var(--primary-light);
-            box-shadow: 0 0 20px rgba(62, 207, 142, 0.5);
+            box-shadow: 0 0 20px rgba(62, 207, 142, 0.6);
+            transform: translateY(-2px);
         }
 
-        .btn-secondary {
-            background: transparent;
-            color: var(--primary-color);
+        .btn-primary:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.5;
         }
 
-        .btn-secondary:hover {
-            background: rgba(62, 207, 142, 0.1);
-        }
-
-        /* 2048 Game Styles */
-        #game2048-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.95);
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #game2048-overlay.show {
-            display: flex;
-        }
-
-        .game2048-container {
-            background: rgba(13, 17, 23, 0.98);
-            border: 2px solid var(--primary-color);
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 40px rgba(62, 207, 142, 0.5);
-            max-width: 500px;
-            position: relative;
-        }
-
-        .game2048-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .game2048-title {
-            font-size: 48px;
-            font-weight: 700;
-            color: var(--primary-color);
-            font-family: 'Courier New', monospace;
-        }
-
-        .game2048-score {
-            text-align: right;
-        }
-
-        .game2048-score-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-        }
-
-        .game2048-score-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--primary-color);
-            font-family: 'Courier New', monospace;
-        }
-
-        .game2048-board {
-            background: #1a1f2e;
-            border: 2px solid var(--border-color);
-            border-radius: 4px;
-            padding: 10px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .game2048-cell {
-            aspect-ratio: 1;
-            background: #0e1117;
-            border-radius: 4px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 32px;
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-            transition: all 0.15s ease;
-        }
-
-        .game2048-cell[data-value="2"] { background: #2e3440; color: #d8dee9; }
-        .game2048-cell[data-value="4"] { background: #3b4252; color: #d8dee9; }
-        .game2048-cell[data-value="8"] { background: #434c5e; color: #d8dee9; }
-        .game2048-cell[data-value="16"] { background: #4c566a; color: #eceff4; }
-        .game2048-cell[data-value="32"] { background: #5e81ac; color: #eceff4; }
-        .game2048-cell[data-value="64"] { background: #81a1c1; color: #2e3440; }
-        .game2048-cell[data-value="128"] { background: #88c0d0; color: #2e3440; font-size: 28px; }
-        .game2048-cell[data-value="256"] { background: #8fbcbb; color: #2e3440; font-size: 28px; }
-        .game2048-cell[data-value="512"] { background: #a3be8c; color: #2e3440; font-size: 28px; }
-        .game2048-cell[data-value="1024"] { background: #ebcb8b; color: #2e3440; font-size: 24px; }
-        .game2048-cell[data-value="2048"] { background: #d08770; color: #2e3440; font-size: 24px; }
-        .game2048-cell[data-value="4096"] { background: #bf616a; color: #eceff4; font-size: 24px; }
-
-        .game2048-controls {
-            display: flex;
-            gap: 10px;
-            justify-content: space-between;
-        }
-
-        .game2048-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: transparent;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            width: 30px;
-            height: 30px;
+        .error-message {
+            background: rgba(240, 73, 73, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 12px 16px;
             border-radius: 0;
-            cursor: pointer;
-            font-size: 18px;
-            line-height: 1;
+            margin-bottom: 20px;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            display: none;
         }
 
-        .game2048-close:hover {
-            background: var(--primary-color);
-            color: #000;
+        .error-message::before {
+            content: '[ERROR] ';
+            font-weight: 700;
         }
 
-        /* AI Flashcard Indicator */
-        .ai-indicator {
-            display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 10px;
-            font-weight: 600;
-            margin-left: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            animation: pulse 2s ease-in-out infinite;
+        .error-message.show {
+            display: block;
+            animation: blink 0.5s ease-in-out 3;
         }
 
-        @keyframes pulse {
+        @keyframes blink {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+            50% { opacity: 0.5; }
         }
 
-        /* Main App Styles (continuing from original) */
+        /* Main App Styles */
         .app-container {
             display: none;
-            position: relative;
-            z-index: 10;
+            background: var(--background);
+            min-height: 100vh;
         }
 
-        .app-container.active {
+        .app-container.show {
             display: block;
         }
 
-        .top-nav {
-            background: rgba(13, 17, 23, 0.95);
+        /* Header/Navbar */
+        .navbar {
+            background: rgba(0, 0, 0, 0.9);
             border-bottom: 2px solid var(--primary-color);
-            padding: 16px 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(62, 207, 142, 0.3);
+            padding: 16px 0;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 20px rgba(62, 207, 142, 0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .logo {
-            font-size: 24px;
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 18px;
             font-weight: 700;
             color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-family: 'Courier New', monospace;
             text-shadow: 0 0 10px rgba(62, 207, 142, 0.5);
             letter-spacing: 1px;
         }
 
-        .logo::before {
-            content: '> ';
+        .navbar-brand::before {
+            content: '[ ';
         }
 
-        .nav-buttons {
+        .navbar-brand::after {
+            content: ' ]';
+        }
+
+        .navbar-user {
             display: flex;
+            align-items: center;
             gap: 16px;
         }
 
-        .nav-buttons button {
-            padding: 8px 16px;
-            background: transparent;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
-            border-radius: 0;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s;
+        .user-info {
+            text-align: right;
             font-family: 'Courier New', monospace;
         }
 
-        .nav-buttons button:hover {
-            background: rgba(62, 207, 142, 0.1);
-            box-shadow: 0 0 10px rgba(62, 207, 142, 0.3);
+        .user-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 13px;
+            text-shadow: 0 0 5px rgba(62, 207, 142, 0.5);
         }
 
+        .user-name::before {
+            content: 'USER: ';
+            color: var(--text-secondary);
+            font-size: 11px;
+        }
+
+        .user-role {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .admin-badge {
+            background: var(--primary-color);
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 0;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            animation: glow-pulse 2s ease-in-out infinite;
+        }
+
+        .btn-logout {
+            padding: 8px 16px;
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn-logout:hover {
+            background: var(--primary-color);
+            color: #000;
+            box-shadow: 0 0 15px rgba(62, 207, 142, 0.5);
+        }
+
+        /* Main Content */
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
             padding: 32px 24px;
         }
 
-        .section {
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            border-radius: 6px 6px 0 0;
+        }
+
+        .tab:hover {
+            color: var(--text-primary);
+            background: var(--surface-hover);
+        }
+
+        .tab.active {
+            color: var(--primary-color);
+            background: transparent;
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+            box-shadow: var(--glow);
+        }
+
+        .tab-content {
             display: none;
         }
 
-        .section.active {
+        .tab-content.active {
             display: block;
+            animation: fadeIn 0.3s ease-in;
         }
 
+        /* Study Sheets Section */
         .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid var(--border-color);
         }
 
-        .section-title {
+        .section-header h2 {
             font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .btn-add {
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: var(--background);
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-add:hover {
+            background: var(--primary-light);
+            box-shadow: var(--glow);
+        }
+
+        .study-sheets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .study-sheet-card {
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
+            padding: 24px;
+            box-shadow: 0 0 15px rgba(62, 207, 142, 0.2);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .study-sheet-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .study-sheet-card:hover {
+            transform: translateX(4px);
+            border-color: var(--primary-light);
+            box-shadow: 0 0 25px rgba(62, 207, 142, 0.4);
+            background: rgba(13, 17, 23, 0.95);
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
+        }
+
+        .sheet-title {
+            font-size: 18px;
             font-weight: 700;
             color: var(--primary-color);
             margin-bottom: 8px;
             font-family: 'Courier New', monospace;
-            text-shadow: 0 0 10px rgba(62, 207, 142, 0.3);
+            text-shadow: 0 0 5px rgba(62, 207, 142, 0.3);
         }
 
-        .section-title::before {
+        .sheet-subject {
+            display: inline-block;
+            padding: 4px 12px;
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .sheet-content {
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.6;
+            max-height: 100px;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+
+        .sheet-meta {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-family: 'Courier New', monospace;
+        }
+
+        .sheet-meta::before {
             content: '> ';
             color: var(--primary-color);
         }
 
-        .section-subtitle {
-            color: var(--text-secondary);
-            font-size: 14px;
-        }
-
-        /* Cards & Grid */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 24px;
-            margin-bottom: 24px;
-        }
-
-        .card {
+        /* Calendar Section */
+        #calendar {
             background: var(--surface);
             border: 1px solid var(--border-color);
             padding: 24px;
             border-radius: 8px;
-            transition: all 0.2s ease;
             box-shadow: var(--shadow);
         }
 
-        .card:hover {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 20px rgba(62, 207, 142, 0.2);
-            transform: translateY(-2px);
+        /* FullCalendar Dark Theme Overrides */
+        .fc {
+            --fc-bg-event-opacity: 1;
+            --fc-border-color: var(--border-color);
+            --fc-button-bg-color: var(--surface-hover);
+            --fc-button-border-color: var(--border-color);
+            --fc-button-text-color: var(--text-primary);
+            --fc-button-hover-bg-color: var(--primary-color);
+            --fc-button-hover-border-color: var(--primary-color);
+            --fc-button-active-bg-color: var(--primary-dark);
+            --fc-button-active-border-color: var(--primary-dark);
         }
 
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 12px;
+        .fc .fc-toolbar-title {
+            color: var(--text-primary) !important;
+            font-size: 24px !important;
+            font-weight: 600 !important;
         }
 
-        .card-meta {
-            font-size: 12px;
-            color: var(--text-secondary);
-            margin-bottom: 12px;
+        .fc .fc-col-header-cell {
+            background: var(--background-light) !important;
+            border-color: var(--border-color) !important;
         }
 
-        .card-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-            flex-wrap: wrap;
+        .fc .fc-col-header-cell-cushion {
+            color: var(--text-secondary) !important;
+            font-weight: 600 !important;
         }
 
-        .card-actions button {
-            padding: 6px 12px;
-            font-size: 12px;
-            border-radius: 4px;
-            border: 1px solid var(--border-color);
-            background: var(--background);
-            color: var(--text-primary);
-            cursor: pointer;
-            transition: all 0.2s;
+        .fc .fc-daygrid-day {
+            background: var(--surface) !important;
+            border-color: var(--border-color) !important;
         }
 
-        .card-actions button:hover {
-            border-color: var(--primary-color);
-            background: rgba(62, 207, 142, 0.1);
+        .fc .fc-daygrid-day:hover {
+            background: var(--surface-hover) !important;
         }
 
-        .card-actions button.danger:hover {
-            border-color: var(--danger);
-            background: rgba(240, 73, 73, 0.1);
-            color: var(--danger);
+        .fc .fc-daygrid-day-number {
+            color: var(--text-primary) !important;
         }
 
-        /* Buttons */
-        .btn-group {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
+        .fc .fc-daygrid-day.fc-day-today {
+            background: rgba(62, 207, 142, 0.1) !important;
         }
 
-        .btn-icon {
-            padding: 8px 16px;
-            background: var(--primary-color);
-            color: #000;
-            border: none;
-            border-radius: 0;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: var(--shadow);
-            font-family: 'Courier New', monospace;
-        }
-
-        .btn-icon:hover {
-            background: var(--primary-light);
-            box-shadow: 0 0 20px rgba(62, 207, 142, 0.4);
-            transform: translateY(-1px);
-        }
-
-        /* Modal */
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -608,382 +640,225 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            overflow-y: auto;
             padding: 20px;
-            backdrop-filter: blur(5px);
         }
 
         .modal.show {
             display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .modal-content {
             background: var(--surface);
-            border: 2px solid var(--primary-color);
-            padding: 32px;
-            border-radius: 0;
-            max-width: 600px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             width: 100%;
+            max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 0 40px rgba(62, 207, 142, 0.3);
-            position: relative;
+            animation: slideUp 0.3s ease-out;
+            box-shadow: var(--shadow-lg);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
-            margin-bottom: 24px;
-            padding-bottom: 16px;
+            padding: 24px;
             border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .modal-title {
+        .modal-header h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
             font-size: 24px;
-            font-weight: 700;
-            color: var(--primary-color);
-            font-family: 'Courier New', monospace;
-        }
-
-        .modal-title::before {
-            content: '> ';
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 16px;
-            right: 16px;
-            background: transparent;
-            border: 1px solid var(--primary-color);
-            color: var(--primary-color);
+            cursor: pointer;
+            color: var(--text-secondary);
             width: 32px;
             height: 32px;
-            border-radius: 0;
-            cursor: pointer;
-            font-size: 20px;
-            line-height: 1;
-        }
-
-        .modal-close:hover {
-            background: var(--primary-color);
-            color: #000;
-        }
-
-        /* Form Elements */
-        .form-row {
-            margin-bottom: 20px;
-        }
-
-        .form-row label {
-            display: block;
-            margin-bottom: 8px;
-            color: var(--primary-color);
-            font-weight: 600;
-            font-size: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .form-row input,
-        .form-row textarea,
-        .form-row select {
-            width: 100%;
-            padding: 12px;
-            background: var(--background);
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            color: var(--text-primary);
-            font-size: 14px;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .form-row textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .form-row input:focus,
-        .form-row textarea:focus,
-        .form-row select:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 10px rgba(62, 207, 142, 0.2);
-        }
-
-        /* Flashcard Specific */
-        .flashcard {
-            perspective: 1000px;
-            min-height: 300px;
-        }
-
-        .flashcard-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            min-height: 300px;
-            text-align: center;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-
-        .flashcard.flipped .flashcard-inner {
-            transform: rotateY(180deg);
-        }
-
-        .flashcard-front, .flashcard-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 32px;
-            background: var(--surface);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
-            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
-        .flashcard-back {
-            transform: rotateY(180deg);
-            background: var(--background-light);
-            border-color: var(--primary-color);
-        }
-
-        .flashcard-text {
-            font-size: 24px;
-            font-weight: 500;
-            line-height: 1.6;
-        }
-
-        /* Calendar Styles */
-        #calendar {
-            background: var(--surface);
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .fc {
-            color: var(--text-primary);
-        }
-
-        .fc-theme-standard td,
-        .fc-theme-standard th {
-            border-color: var(--border-color);
-        }
-
-        .fc-button {
-            background: var(--primary-color) !important;
-            border-color: var(--primary-color) !important;
-            color: #000 !important;
-            text-transform: uppercase;
-            font-weight: 600;
-            letter-spacing: 1px;
-        }
-
-        .fc-button:hover {
-            background: var(--primary-light) !important;
-        }
-
-        .fc-daygrid-day-number {
-            color: var(--text-primary);
-        }
-
-        /* Goals */
-        .goal-progress {
-            width: 100%;
-            height: 8px;
-            background: var(--background);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-top: 12px;
-        }
-
-        .goal-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
-            transition: width 0.3s ease;
-            box-shadow: 0 0 10px rgba(62, 207, 142, 0.5);
-        }
-
-        /* Resources Table */
-        .resources-table {
-            width: 100%;
-            background: var(--surface);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
-        .resources-table th,
-        .resources-table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .resources-table th {
-            background: var(--background);
-            color: var(--primary-color);
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 12px;
-            letter-spacing: 1px;
-        }
-
-        .resources-table tr:hover {
+        .btn-close:hover {
             background: var(--surface-hover);
+            color: var(--text-primary);
         }
 
-        .resource-link {
-            color: var(--primary-color);
-            text-decoration: none;
-            font-weight: 500;
+        .modal-body {
+            padding: 24px;
         }
 
-        .resource-link:hover {
-            text-decoration: underline;
-        }
-
-        /* Notes Editor */
-        .notes-editor {
-            background: var(--surface);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: hidden;
-            margin-bottom: 24px;
-        }
-
-        .notes-toolbar {
-            background: var(--background);
-            border-bottom: 1px solid var(--border-color);
-            padding: 12px;
+        .modal-footer {
+            padding: 24px;
+            border-top: 1px solid var(--border-color);
             display: flex;
-            gap: 8px;
+            justify-content: flex-end;
+            gap: 12px;
         }
 
-        .notes-toolbar button {
-            padding: 6px 12px;
-            background: var(--surface);
+        .btn-secondary {
+            padding: 10px 20px;
+            background: transparent;
+            color: var(--text-secondary);
             border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s;
-        }
-
-        .notes-toolbar button:hover {
-            border-color: var(--primary-color);
-            background: rgba(62, 207, 142, 0.1);
-        }
-
-        #notesTextarea {
-            width: 100%;
-            min-height: 400px;
-            background: var(--surface);
-            border: none;
-            padding: 20px;
-            color: var(--text-primary);
-            font-family: 'Courier New', monospace;
+            border-radius: 6px;
             font-size: 14px;
-            line-height: 1.6;
-            resize: vertical;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        #notesTextarea:focus {
-            outline: none;
+        .btn-secondary:hover {
+            background: var(--surface-hover);
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
         }
 
-        .notes-preview {
-            padding: 20px;
-            background: var(--surface);
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px 16px;
+            background: var(--background-light);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            min-height: 400px;
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            resize: vertical;
+            transition: all 0.2s ease;
         }
 
-        .notes-preview h1,
-        .notes-preview h2,
-        .notes-preview h3 {
-            color: var(--primary-color);
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(62, 207, 142, 0.1);
+        }
+
+        textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Sheet View Modal */
+        .sheet-view-content {
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+
+        .sheet-view-content h1,
+        .sheet-view-content h2,
+        .sheet-view-content h3 {
             margin-top: 24px;
             margin-bottom: 12px;
+            color: var(--text-primary);
         }
 
-        .notes-preview code {
-            background: var(--background);
-            padding: 2px 6px;
-            border-radius: 3px;
+        .sheet-view-content h1 {
             color: var(--primary-color);
-            font-family: 'Courier New', monospace;
         }
 
-        .notes-preview pre {
-            background: var(--background);
-            padding: 16px;
-            border-radius: 4px;
-            overflow-x: auto;
+        .sheet-view-content p {
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .sheet-view-content code {
+            background: var(--background-light);
             border: 1px solid var(--border-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: var(--primary-color);
         }
 
-        .notes-preview pre code {
+        .sheet-view-content pre {
+            background: var(--background-light);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 16px;
+        }
+
+        .sheet-view-content pre code {
             background: none;
+            border: none;
             padding: 0;
+        }
+
+        .sheet-view-content ul,
+        .sheet-view-content ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+            color: var(--text-secondary);
+        }
+
+        .sheet-view-content strong {
+            color: var(--text-primary);
+        }
+
+        .sheet-view-content a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .sheet-view-content a:hover {
+            text-decoration: underline;
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .top-nav {
+            .navbar-content {
                 flex-direction: column;
                 gap: 16px;
             }
 
-            .nav-buttons {
-                width: 100%;
-                justify-content: center;
-                flex-wrap: wrap;
+            .tabs {
+                overflow-x: auto;
             }
 
-            .grid {
+            .study-sheets-grid {
                 grid-template-columns: 1fr;
             }
 
-            .login-card {
-                padding: 32px 24px;
-            }
-
-            .modal-content {
-                padding: 24px;
-            }
-
-            .game2048-container {
-                padding: 20px;
-                max-width: 95vw;
-            }
-
-            .game2048-title {
-                font-size: 36px;
-            }
-
-            .game2048-score-value {
-                font-size: 24px;
-            }
-
-            .game2048-cell {
-                font-size: 24px;
+            .section-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
             }
         }
 
-        /* Loading State */
+        /* Loading Spinner */
         .loading {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid var(--border-color);
+            border: 3px solid rgba(62, 207, 142, 0.3);
             border-radius: 50%;
             border-top-color: var(--primary-color);
             animation: spin 1s ease-in-out infinite;
@@ -992,1027 +867,635 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .read-only-notice {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-form-group {
+            margin-bottom: 20px;
+        }
+
+        .event-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .event-form-group input,
+        .event-form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .event-form-group input:focus,
+        .event-form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(62, 207, 142, 0.1);
+        }
+
+        .event-form-group input::placeholder,
+        .event-form-group select option {
+            color: var(--text-secondary);
+        }
+
+        .event-form-group select {
+            cursor: pointer;
+        }
+
+        .event-form-group select option {
+            background: var(--background-light);
+            color: var(--text-primary);
+        }
+
+        /* About Website Button */
+        .about-btn {
+            margin-top: 16px;
+            padding: 8px 16px;
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .about-btn:hover {
+            background: var(--primary-color);
+            color: #000;
+            box-shadow: 0 0 15px rgba(62, 207, 142, 0.5);
+        }
+
+        .about-content {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
+            padding: 20px;
+            margin-top: 20px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            font-size: 13px;
+            text-align: left;
+            font-family: 'Courier New', monospace;
+        }
+
+        .about-content::before {
+            content: '> SYSTEM INFO:\A';
+            color: var(--primary-color);
+            font-weight: 700;
+            white-space: pre;
+        }
     </style>
 </head>
 <body>
+    <!-- Matrix Rain Background -->
     <canvas id="matrix-bg"></canvas>
-
+    
     <!-- Login Page -->
     <div id="loginPage" class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <h1>STUDY HUB</h1>
-                <p>Access Terminal v2.048</p>
+                <h1>📚 Kenneth's Study Hub</h1>
+                <p id="authSubtitle">Sign in to access your study materials</p>
             </div>
-            <form id="loginForm" onsubmit="handleLogin(event)">
+            
+            <div id="loginError" class="error-message"></div>
+            
+            <form id="authForm">
                 <div class="form-group">
-                    <label for="loginEmail">User ID</label>
-                    <input type="email" id="loginEmail" placeholder="user@system.net" required>
+                    <label for="email">Email</label>
+                    <input type="email" id="email" required>
                 </div>
+                
                 <div class="form-group">
-                    <label for="loginPassword">Access Key</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required minlength="6">
                 </div>
-                <button type="submit" class="btn btn-primary" id="loginBtn">
-                    INITIALIZE SESSION
+                
+                <button type="submit" class="btn btn-primary" id="authBtn">
+                    Sign In
                 </button>
             </form>
-            <div style="margin-top: 16px;">
-                <button type="button" class="btn btn-secondary" onclick="showSignup()">
-                    NEW USER REGISTRATION
-                </button>
+            
+            <div style="text-align: center; margin-top: 20px;">
+                <p style="color: var(--text-secondary); font-size: 14px;">
+                    <span id="toggleAuthText">Don't have an account?</span>
+                    <button type="button" id="toggleAuthMode" style="background: none; border: none; color: var(--primary-color); font-weight: 600; cursor: pointer; text-decoration: underline;">
+                        Sign Up
+                    </button>
+                </p>
             </div>
-        </div>
-    </div>
-
-    <!-- Signup Page -->
-    <div id="signupPage" class="login-container" style="display: none;">
-        <div class="login-card">
-            <div class="login-header">
-                <h1>REGISTRATION</h1>
-                <p>New User Setup Protocol</p>
-            </div>
-            <form id="signupForm" onsubmit="handleSignup(event)">
-                <div class="form-group">
-                    <label for="signupEmail">User ID</label>
-                    <input type="email" id="signupEmail" placeholder="user@system.net" required>
-                </div>
-                <div class="form-group">
-                    <label for="signupPassword">Access Key</label>
-                    <input type="password" id="signupPassword" placeholder="••••••••" required>
-                </div>
-                <div class="form-group">
-                    <label for="signupName">Display Name</label>
-                    <input type="text" id="signupName" placeholder="Enter your name" required>
-                </div>
-                <button type="submit" class="btn btn-primary" id="signupBtn">
-                    CREATE ACCOUNT
-                </button>
-            </form>
-            <div style="margin-top: 16px;">
-                <button type="button" class="btn btn-secondary" onclick="showLogin()">
-                    RETURN TO LOGIN
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 2048 Game Overlay (Hidden) -->
-    <div id="game2048-overlay">
-        <div class="game2048-container">
-            <button class="game2048-close" onclick="close2048Game()">×</button>
-            <div class="game2048-header">
-                <div class="game2048-title">2048</div>
-                <div class="game2048-score">
-                    <div class="game2048-score-label">Score</div>
-                    <div class="game2048-score-value" id="game2048-score">0</div>
-                </div>
-            </div>
-            <div class="game2048-board" id="game2048-board"></div>
-            <div class="game2048-controls">
-                <button class="btn btn-primary" onclick="init2048Game()" style="flex: 1;">New Game</button>
-                <button class="btn btn-secondary" onclick="close2048Game()" style="flex: 1;">Close</button>
-            </div>
-            <div style="margin-top: 15px; text-align: center; color: var(--text-secondary); font-size: 12px; font-family: 'Courier New', monospace;">
-                Use arrow keys to play
+            
+            <button type="button" class="about-btn" id="aboutWebsiteBtn">
+                About Website
+            </button>
+            
+            <div id="aboutContent" class="about-content" style="display: none;">
+                I was sick of manually using my planner, so here this is. I can also access all my study stuff easily and thats cool! I love being able to access everything in 1 place tbh. i hope whoever reads this has a good life!!
             </div>
         </div>
     </div>
 
     <!-- Main App -->
     <div id="appContainer" class="app-container">
-        <!-- Top Navigation -->
-        <nav class="top-nav">
-            <div class="logo">STUDY.HUB</div>
-            <div class="nav-buttons">
-                <button onclick="showSection('notes')">Notes</button>
-                <button onclick="showSection('flashcards')">Flashcards</button>
-                <button onclick="showSection('goals')">Goals</button>
-                <button onclick="showSection('calendar')">Calendar</button>
-                <button onclick="showSection('resources')">Resources</button>
-                <button onclick="logout()">Logout</button>
+        <!-- Navbar -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <div class="navbar-brand">📚 Kenneth's Study Hub</div>
+                <div class="navbar-user">
+                    <div class="user-info">
+                        <div class="user-name" id="userName"></div>
+                        <div class="user-role" id="userRole"></div>
+                    </div>
+                    <button class="btn-logout" id="logoutBtn">Logout</button>
+                </div>
             </div>
         </nav>
 
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <main class="main-content">
-            <!-- Notes Section -->
-            <section id="notesSection" class="section active">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="study-sheets">Study Sheets</button>
+                <button class="tab" data-tab="calendar">Calendar</button>
+            </div>
+
+            <!-- Study Sheets Tab -->
+            <div id="study-sheets" class="tab-content active">
+                <div id="readOnlyNotice" class="read-only-notice" style="display: none;">
+                    ℹ️ You have read-only access. Only admins can create or edit study sheets.
+                </div>
+                
                 <div class="section-header">
-                    <h2 class="section-title">Study Notes</h2>
-                    <p class="section-subtitle">Markdown-powered note-taking system</p>
+                    <h2>Study Sheets</h2>
+                    <button class="btn-add" id="addSheetBtn" style="display: none;">+ New Sheet</button>
                 </div>
-
-                <div class="btn-group">
-                    <button class="btn-icon" onclick="saveNotes()">💾 Save Notes</button>
-                    <button class="btn-icon" onclick="togglePreview()">👁️ Toggle Preview</button>
+                
+                <div class="study-sheets-grid" id="studySheetsGrid">
+                    <!-- Study sheets will be loaded here -->
                 </div>
+            </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
-                    <div class="notes-editor">
-                        <div class="notes-toolbar">
-                            <button onclick="insertMarkdown('# ')">H1</button>
-                            <button onclick="insertMarkdown('## ')">H2</button>
-                            <button onclick="insertMarkdown('**', '**')">Bold</button>
-                            <button onclick="insertMarkdown('*', '*')">Italic</button>
-                            <button onclick="insertMarkdown('`', '`')">Code</button>
-                            <button onclick="insertMarkdown('- ')">List</button>
-                        </div>
-                        <textarea id="notesTextarea" placeholder="# Start writing your notes here...
-
-Use Markdown syntax:
-- **Bold** and *italic*
-- `code blocks`
-- Lists and more!"></textarea>
-                    </div>
-                    <div class="notes-preview" id="notesPreview">
-                        <p style="color: var(--text-secondary);">Preview will appear here...</p>
-                    </div>
+            <!-- Calendar Tab -->
+            <div id="calendar-tab" class="tab-content">
+                <div id="calendarReadOnlyNotice" class="read-only-notice" style="display: none;">
+                    ℹ️ You have read-only access. Only admins can create or edit calendar events.
                 </div>
-            </section>
-
-            <!-- Flashcards Section -->
-            <section id="flashcardsSection" class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Flashcards <span class="ai-indicator">AI Powered</span></h2>
-                    <p class="section-subtitle">Study with AI-generated flashcards</p>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn-icon" onclick="openFlashcardModal()">➕ New Flashcard</button>
-                    <button class="btn-icon" onclick="openAIGeneratorModal()">🤖 AI Generate</button>
-                    <button class="btn-icon" onclick="startStudyMode()">📚 Study Mode</button>
-                </div>
-
-                <div class="grid" id="flashcardsGrid"></div>
-            </section>
-
-            <!-- Goals Section -->
-            <section id="goalsSection" class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Learning Goals</h2>
-                    <p class="section-subtitle">Track your progress and achievements</p>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn-icon" onclick="openGoalModal()">➕ New Goal</button>
-                </div>
-
-                <div class="grid" id="goalsGrid"></div>
-            </section>
-
-            <!-- Calendar Section -->
-            <section id="calendarSection" class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Study Calendar</h2>
-                    <p class="section-subtitle">Manage deadlines and study sessions</p>
-                </div>
-
+                
                 <div id="calendar"></div>
-            </section>
-
-            <!-- Resources Section -->
-            <section id="resourcesSection" class="section">
-                <div class="section-header">
-                    <h2 class="section-title">Learning Resources</h2>
-                    <p class="section-subtitle">Curated study materials and links</p>
-                </div>
-
-                <div class="btn-group">
-                    <button class="btn-icon" onclick="openResourceModal()">➕ Add Resource</button>
-                </div>
-
-                <table class="resources-table">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Category</th>
-                            <th>Link</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="resourcesTableBody"></tbody>
-                </table>
-            </section>
+            </div>
         </main>
     </div>
 
-    <!-- Flashcard Modal -->
-    <div id="flashcardModal" class="modal">
+    <!-- Study Sheet Modal (Add/Edit) -->
+    <div id="sheetModal" class="modal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeFlashcardModal()">×</button>
             <div class="modal-header">
-                <h3 class="modal-title" id="flashcardModalTitle">New Flashcard</h3>
+                <h3 id="sheetModalTitle">New Study Sheet</h3>
+                <button class="btn-close" id="closeSheetModal">&times;</button>
             </div>
-            <form id="flashcardForm" onsubmit="saveFlashcard(event)">
-                <div class="form-row">
-                    <label for="flashcardCategory">Category</label>
-                    <input type="text" id="flashcardCategory" placeholder="e.g., Math, History, Science" required>
-                </div>
-                <div class="form-row">
-                    <label for="flashcardQuestion">Question / Front</label>
-                    <textarea id="flashcardQuestion" placeholder="Enter the question or prompt" required></textarea>
-                </div>
-                <div class="form-row">
-                    <label for="flashcardAnswer">Answer / Back</label>
-                    <textarea id="flashcardAnswer" placeholder="Enter the answer or explanation" required></textarea>
-                </div>
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-primary">Save Flashcard</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeFlashcardModal()">Cancel</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="sheetForm">
+                    <div class="form-group">
+                        <label for="sheetTitle">Title</label>
+                        <input type="text" id="sheetTitle" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sheetSubject">Subject</label>
+                        <input type="text" id="sheetSubject" required placeholder="e.g., Mathematics, Biology, History">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="sheetContent">Content (Markdown supported)</label>
+                        <textarea id="sheetContent" required placeholder="# Heading
+## Subheading
+- Bullet point
+**Bold text**
+*Italic text*"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSheetBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveSheetBtn">Save Sheet</button>
+            </div>
         </div>
     </div>
 
-    <!-- AI Flashcard Generator Modal -->
-    <div id="aiGeneratorModal" class="modal">
+    <!-- Study Sheet View Modal -->
+    <div id="viewSheetModal" class="modal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeAIGeneratorModal()">×</button>
             <div class="modal-header">
-                <h3 class="modal-title">AI Flashcard Generator</h3>
+                <h3 id="viewSheetTitle"></h3>
+                <button class="btn-close" id="closeViewSheetModal">&times;</button>
             </div>
-            <div class="form-row">
-                <label for="aiTopic">Topic or Text</label>
-                <textarea id="aiTopic" placeholder="Enter a topic or paste text to generate flashcards from..." style="min-height: 150px;"></textarea>
+            <div class="modal-body">
+                <div id="viewSheetSubject"></div>
+                <div id="viewSheetContent" class="sheet-view-content"></div>
+                <div id="viewSheetMeta" class="sheet-meta"></div>
             </div>
-            <div class="form-row">
-                <label for="aiCount">Number of Flashcards</label>
-                <input type="number" id="aiCount" value="5" min="1" max="10">
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="editSheetBtn" style="display: none;">Edit</button>
+                <button class="btn btn-secondary" id="closeViewBtn">Close</button>
             </div>
-            <div class="btn-group">
-                <button class="btn btn-primary" onclick="generateAIFlashcards()">
-                    <span id="aiGenerateText">🤖 Generate with AI</span>
-                    <span id="aiGenerateLoading" style="display: none;">
-                        <span class="loading"></span> Generating...
-                    </span>
-                </button>
-                <button class="btn btn-secondary" onclick="closeAIGeneratorModal()">Cancel</button>
-            </div>
-            <div id="aiGeneratorResults" style="margin-top: 20px;"></div>
         </div>
     </div>
 
-    <!-- Goal Modal -->
-    <div id="goalModal" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeGoalModal()">×</button>
-            <div class="modal-header">
-                <h3 class="modal-title" id="goalModalTitle">New Goal</h3>
-            </div>
-            <form id="goalForm" onsubmit="saveGoal(event)">
-                <div class="form-row">
-                    <label for="goalTitle">Goal Title</label>
-                    <input type="text" id="goalTitle" placeholder="e.g., Master Calculus" required>
-                </div>
-                <div class="form-row">
-                    <label for="goalDescription">Description</label>
-                    <textarea id="goalDescription" placeholder="Describe your goal in detail"></textarea>
-                </div>
-                <div class="form-row">
-                    <label for="goalDeadline">Deadline</label>
-                    <input type="date" id="goalDeadline">
-                </div>
-                <div class="form-row">
-                    <label for="goalProgress">Progress (%)</label>
-                    <input type="number" id="goalProgress" value="0" min="0" max="100">
-                </div>
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-primary">Save Goal</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeGoalModal()">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Resource Modal -->
-    <div id="resourceModal" class="modal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeResourceModal()">×</button>
-            <div class="modal-header">
-                <h3 class="modal-title" id="resourceModalTitle">New Resource</h3>
-            </div>
-            <form id="resourceForm" onsubmit="saveResource(event)">
-                <div class="form-row">
-                    <label for="resourceTitle">Title</label>
-                    <input type="text" id="resourceTitle" placeholder="e.g., Calculus Tutorial" required>
-                </div>
-                <div class="form-row">
-                    <label for="resourceCategory">Category</label>
-                    <select id="resourceCategory" required>
-                        <option value="video">Video</option>
-                        <option value="article">Article</option>
-                        <option value="book">Book</option>
-                        <option value="course">Course</option>
-                        <option value="tool">Tool</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <label for="resourceUrl">URL</label>
-                    <input type="url" id="resourceUrl" placeholder="https://..." required>
-                </div>
-                <div class="form-row">
-                    <label for="resourceDescription">Description</label>
-                    <textarea id="resourceDescription" placeholder="Brief description of the resource"></textarea>
-                </div>
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-primary">Save Resource</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeResourceModal()">Cancel</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Event Modal -->
+    <!-- Event Modal (Add/Edit) -->
     <div id="eventModal" class="modal">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeEventModal()">×</button>
             <div class="modal-header">
-                <h3 class="modal-title" id="eventModalTitle">New Event</h3>
+                <h3 id="eventModalTitle">New Event</h3>
+                <button class="btn-close" id="closeEventModal">&times;</button>
             </div>
-            <form id="eventForm" onsubmit="event.preventDefault(); saveCalendarEvent();">
-                <div class="form-row">
-                    <label for="eventTitle">Title</label>
-                    <input type="text" id="eventTitle" required>
-                </div>
-                <div class="form-row">
-                    <label for="eventType">Type</label>
-                    <select id="eventType" required>
-                        <option value="exam">Exam</option>
-                        <option value="deadline">Deadline</option>
-                        <option value="assignment">Assignment</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <div class="form-row">
-                    <label for="eventStart">Start Date/Time</label>
-                    <input type="datetime-local" id="eventStart" required>
-                </div>
-                <div class="form-row">
-                    <label for="eventEnd">End Date/Time</label>
-                    <input type="datetime-local" id="eventEnd">
-                </div>
-                <div class="form-row">
-                    <label for="eventDescription">Description</label>
-                    <textarea id="eventDescription"></textarea>
-                </div>
-                <div class="btn-group">
-                    <button type="submit" class="btn btn-primary">Save Event</button>
-                    <button type="button" class="btn btn-secondary" onclick="closeEventModal()">Cancel</button>
-                </div>
-            </form>
+            <div class="modal-body">
+                <form id="eventForm">
+                    <div class="event-form-group">
+                        <label for="eventTitle">Event Title</label>
+                        <input type="text" id="eventTitle" required>
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventType">Event Type</label>
+                        <select id="eventType" required>
+                            <option value="deadline">Study Deadline</option>
+                            <option value="exam">Exam</option>
+                            <option value="assignment">Assignment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventStart">Start Date & Time</label>
+                        <input type="datetime-local" id="eventStart" required>
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventEnd">End Date & Time</label>
+                        <input type="datetime-local" id="eventEnd">
+                    </div>
+                    
+                    <div class="event-form-group">
+                        <label for="eventDescription">Description (optional)</label>
+                        <textarea id="eventDescription" style="min-height: 100px;"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelEventBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveEventBtn">Save Event</button>
+            </div>
         </div>
     </div>
 
-    <!-- Firebase Configuration -->
+    <!-- Firebase SDK -->
     <script type="module">
-        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, updateProfile } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-        import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc, query, where, orderBy } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Your Firebase config
         const firebaseConfig = {
-            apiKey: "AIzaSyBoI0n09vJ7dn0-Jb91m8l4aGtPZYtwGiM",
-            authDomain: "usernames-b9488.firebaseapp.com",
-            projectId: "usernames-b9488",
-            storageBucket: "usernames-b9488.firebasestorage.app",
-            messagingSenderId: "902486022937",
-            appId: "1:902486022937:web:b1c0e5df3b9bf3123cc388",
-            measurementId: "G-HZD5CN8963"
+          apiKey: "AIzaSyBoI0n09vJ7dn0-Jb91m8l4aGtPZYtwGiM",
+          authDomain: "usernames-b9488.firebaseapp.com",
+          projectId: "usernames-b9488",
+          storageBucket: "usernames-b9488.firebasestorage.app",
+          messagingSenderId: "902486022937",
+          appId: "1:902486022937:web:b1c0e5df3b9bf3123cc388",
+          measurementId: "G-HZD5CN8963"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-
-        window.auth = auth;
-        window.db = db;
-        window.addDoc = addDoc;
-        window.collection = collection;
-        window.getDocs = getDocs;
-        window.doc = doc;
-        window.updateDoc = updateDoc;
-        window.deleteDoc = deleteDoc;
-        window.getDoc = getDoc;
-        window.query = query;
-        window.where = where;
-        window.orderBy = orderBy;
-
+        
+        // Global State
         let currentUser = null;
         let isAdmin = false;
         let calendar = null;
-        let currentEditingFlashcard = null;
-        let currentEditingGoal = null;
-        let currentEditingResource = null;
+        let currentEditingSheet = null;
         let currentEditingEvent = null;
+        let isSignupMode = false;
 
-        // 2048 Game State
-        let game2048Grid = [];
-        let game2048Score = 0;
-        const secretKeySequence = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight'];
-        let currentKeyIndex = 0;
-
-        // Secret key listener for 2048 game
-        document.addEventListener('keydown', (e) => {
-            if (e.key === secretKeySequence[currentKeyIndex]) {
-                currentKeyIndex++;
-                if (currentKeyIndex === secretKeySequence.length) {
-                    open2048Game();
-                    currentKeyIndex = 0;
-                }
-            } else {
-                currentKeyIndex = 0;
-            }
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', () => {
+            setupAuthListener();
+            setupEventListeners();
         });
 
-        // 2048 Game Functions
-        window.open2048Game = function() {
-            document.getElementById('game2048-overlay').classList.add('show');
-            init2048Game();
-        }
-
-        window.close2048Game = function() {
-            document.getElementById('game2048-overlay').classList.remove('show');
-        }
-
-        window.init2048Game = function() {
-            game2048Grid = Array(4).fill(null).map(() => Array(4).fill(0));
-            game2048Score = 0;
-            document.getElementById('game2048-score').textContent = '0';
-            addNew2048Tile();
-            addNew2048Tile();
-            render2048Board();
-        }
-
-        function addNew2048Tile() {
-            const emptyCells = [];
-            for (let i = 0; i < 4; i++) {
-                for (let j = 0; j < 4; j++) {
-                    if (game2048Grid[i][j] === 0) {
-                        emptyCells.push({row: i, col: j});
-                    }
-                }
-            }
-            if (emptyCells.length > 0) {
-                const {row, col} = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-                game2048Grid[row][col] = Math.random() < 0.9 ? 2 : 4;
-            }
-        }
-
-        function render2048Board() {
-            const board = document.getElementById('game2048-board');
-            board.innerHTML = '';
-            for (let i = 0; i < 4; i++) {
-                for (let j = 0; j < 4; j++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'game2048-cell';
-                    const value = game2048Grid[i][j];
-                    if (value > 0) {
-                        cell.textContent = value;
-                        cell.setAttribute('data-value', value);
-                    }
-                    board.appendChild(cell);
-                }
-            }
-        }
-
-        function move2048(direction) {
-            let moved = false;
-            const oldGrid = JSON.parse(JSON.stringify(game2048Grid));
-
-            if (direction === 'left' || direction === 'right') {
-                for (let i = 0; i < 4; i++) {
-                    const row = game2048Grid[i];
-                    const newRow = direction === 'left' ? mergeLine(row) : mergeLine(row.reverse()).reverse();
-                    game2048Grid[i] = newRow;
-                }
-            } else {
-                for (let j = 0; j < 4; j++) {
-                    const col = [game2048Grid[0][j], game2048Grid[1][j], game2048Grid[2][j], game2048Grid[3][j]];
-                    const newCol = direction === 'up' ? mergeLine(col) : mergeLine(col.reverse()).reverse();
-                    for (let i = 0; i < 4; i++) {
-                        game2048Grid[i][j] = newCol[i];
-                    }
-                }
-            }
-
-            moved = JSON.stringify(oldGrid) !== JSON.stringify(game2048Grid);
-            
-            if (moved) {
-                addNew2048Tile();
-                render2048Board();
-                if (isGameOver2048()) {
-                    setTimeout(() => alert('Game Over! Final Score: ' + game2048Score), 100);
-                }
-            }
-        }
-
-        function mergeLine(line) {
-            const newLine = line.filter(val => val !== 0);
-            for (let i = 0; i < newLine.length - 1; i++) {
-                if (newLine[i] === newLine[i + 1]) {
-                    newLine[i] *= 2;
-                    game2048Score += newLine[i];
-                    document.getElementById('game2048-score').textContent = game2048Score;
-                    newLine.splice(i + 1, 1);
-                }
-            }
-            while (newLine.length < 4) {
-                newLine.push(0);
-            }
-            return newLine;
-        }
-
-        function isGameOver2048() {
-            for (let i = 0; i < 4; i++) {
-                for (let j = 0; j < 4; j++) {
-                    if (game2048Grid[i][j] === 0) return false;
-                    if (j < 3 && game2048Grid[i][j] === game2048Grid[i][j + 1]) return false;
-                    if (i < 3 && game2048Grid[i][j] === game2048Grid[i + 1][j]) return false;
-                }
-            }
-            return true;
-        }
-
-        document.addEventListener('keydown', (e) => {
-            if (!document.getElementById('game2048-overlay').classList.contains('show')) return;
-            
-            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-                e.preventDefault();
-                const directionMap = {
-                    'ArrowUp': 'up',
-                    'ArrowDown': 'down',
-                    'ArrowLeft': 'left',
-                    'ArrowRight': 'right'
-                };
-                move2048(directionMap[e.key]);
-            }
-        });
-
-        // Auth State Observer
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                currentUser = user;
-                isAdmin = user.email === 'kennethsafo24@gmail.com';
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('signupPage').style.display = 'none';
-                document.getElementById('appContainer').classList.add('active');
-                initApp();
-            } else {
-                currentUser = null;
-                isAdmin = false;
-                document.getElementById('loginPage').style.display = 'flex';
-                document.getElementById('appContainer').classList.remove('active');
-            }
-        });
-
-        window.handleLogin = async function(event) {
-            event.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            const btn = document.getElementById('loginBtn');
-            
-            btn.textContent = 'AUTHENTICATING...';
-            btn.disabled = true;
-
-            try {
-                await signInWithEmailAndPassword(auth, email, password);
-            } catch (error) {
-                alert('Login failed: ' + error.message);
-                btn.textContent = 'INITIALIZE SESSION';
-                btn.disabled = false;
-            }
-        }
-
-        window.handleSignup = async function(event) {
-            event.preventDefault();
-            const email = document.getElementById('signupEmail').value;
-            const password = document.getElementById('signupPassword').value;
-            const name = document.getElementById('signupName').value;
-            const btn = document.getElementById('signupBtn');
-            
-            btn.textContent = 'CREATING ACCOUNT...';
-            btn.disabled = true;
-
-            try {
-                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-                await updateProfile(userCredential.user, { displayName: name });
-                alert('Account created successfully!');
-                showLogin();
-            } catch (error) {
-                alert('Signup failed: ' + error.message);
-                btn.textContent = 'CREATE ACCOUNT';
-                btn.disabled = false;
-            }
-        }
-
-        window.showSignup = function() {
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('signupPage').style.display = 'flex';
-        }
-
-        window.showLogin = function() {
-            document.getElementById('signupPage').style.display = 'none';
-            document.getElementById('loginPage').style.display = 'flex';
-        }
-
-        window.logout = async function() {
-            if (confirm('Are you sure you want to logout?')) {
-                await signOut(auth);
-            }
-        }
-
-        function initApp() {
-            loadNotes();
-            loadFlashcards();
-            loadGoals();
-            initCalendar();
-            loadResources();
-        }
-
-        window.showSection = function(sectionName) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.getElementById(sectionName + 'Section').classList.add('active');
-        }
-
-        // Notes Functions
-        let previewMode = false;
-
-        window.togglePreview = function() {
-            previewMode = !previewMode;
-            if (previewMode) {
-                const markdown = document.getElementById('notesTextarea').value;
-                document.getElementById('notesPreview').innerHTML = marked.parse(markdown);
-            }
-        }
-
-        window.insertMarkdown = function(before, after = '') {
-            const textarea = document.getElementById('notesTextarea');
-            const start = textarea.selectionStart;
-            const end = textarea.selectionEnd;
-            const text = textarea.value;
-            const selectedText = text.substring(start, end);
-            
-            textarea.value = text.substring(0, start) + before + selectedText + after + text.substring(end);
-            textarea.focus();
-            textarea.setSelectionRange(start + before.length, end + before.length);
-            
-            if (previewMode) togglePreview();
-        }
-
-        async function loadNotes() {
-            try {
-                const querySnapshot = await getDocs(query(
-                    collection(db, 'notes'),
-                    where('author_id', '==', currentUser.uid)
-                ));
-                
-                if (!querySnapshot.empty) {
-                    const noteDoc = querySnapshot.docs[0];
-                    document.getElementById('notesTextarea').value = noteDoc.data().content || '';
-                }
-            } catch (error) {
-                console.error('Error loading notes:', error);
-            }
-        }
-
-        window.saveNotes = async function() {
-            const content = document.getElementById('notesTextarea').value;
-            
-            try {
-                const querySnapshot = await getDocs(query(
-                    collection(db, 'notes'),
-                    where('author_id', '==', currentUser.uid)
-                ));
-                
-                if (querySnapshot.empty) {
-                    await addDoc(collection(db, 'notes'), {
-                        content,
-                        author_id: currentUser.uid,
-                        updated_at: new Date().toISOString()
-                    });
+        // Auth Listener
+        function setupAuthListener() {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    await loadUserProfile();
+                    showApp();
                 } else {
-                    const noteDoc = querySnapshot.docs[0];
-                    await updateDoc(doc(db, 'notes', noteDoc.id), {
-                        content,
-                        updated_at: new Date().toISOString()
-                    });
+                    currentUser = null;
+                    isAdmin = false;
+                    showLogin();
                 }
-                
-                alert('Notes saved successfully!');
-            } catch (error) {
-                alert('Error saving notes: ' + error.message);
+            });
+        }
+
+        async function loadUserProfile() {
+            const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+            
+            if (userDoc.exists()) {
+                isAdmin = userDoc.data().is_admin || false;
+            } else {
+                // Create user profile if it doesn't exist
+                await setDoc(doc(db, 'users', currentUser.uid), {
+                    email: currentUser.email,
+                    is_admin: false,
+                    created_at: new Date().toISOString()
+                });
+                isAdmin = false;
+            }
+            
+            updateUserUI();
+        }
+
+        function updateUserUI() {
+            document.getElementById('userName').textContent = currentUser.email;
+            const roleElement = document.getElementById('userRole');
+            
+            if (isAdmin) {
+                roleElement.innerHTML = '<span class="admin-badge">ADMIN</span>';
+                document.getElementById('addSheetBtn').style.display = 'block';
+                document.getElementById('readOnlyNotice').style.display = 'none';
+                document.getElementById('calendarReadOnlyNotice').style.display = 'none';
+            } else {
+                roleElement.textContent = 'Student (Read-Only)';
+                document.getElementById('readOnlyNotice').style.display = 'flex';
+                document.getElementById('calendarReadOnlyNotice').style.display = 'flex';
             }
         }
 
-        // AI Flashcard Generation
-        window.openAIGeneratorModal = function() {
-            document.getElementById('aiGeneratorModal').classList.add('show');
-            document.getElementById('aiGeneratorResults').innerHTML = '';
+        function showLogin() {
+            document.getElementById('loginPage').style.display = 'flex';
+            document.getElementById('appContainer').classList.remove('show');
         }
 
-        window.closeAIGeneratorModal = function() {
-            document.getElementById('aiGeneratorModal').classList.remove('show');
+        function showApp() {
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('appContainer').classList.add('show');
+            loadStudySheets();
+            initCalendar();
         }
 
-        window.generateAIFlashcards = async function() {
-            const topic = document.getElementById('aiTopic').value.trim();
-            const count = parseInt(document.getElementById('aiCount').value);
+        // Event Listeners
+        function setupEventListeners() {
+            document.getElementById('authForm').addEventListener('submit', handleAuth);
+            document.getElementById('toggleAuthMode').addEventListener('click', toggleAuthMode);
+            document.getElementById('aboutWebsiteBtn').addEventListener('click', toggleAboutContent);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+            });
+
+            document.getElementById('addSheetBtn').addEventListener('click', () => openSheetModal());
+            document.getElementById('closeSheetModal').addEventListener('click', closeSheetModal);
+            document.getElementById('cancelSheetBtn').addEventListener('click', closeSheetModal);
+            document.getElementById('saveSheetBtn').addEventListener('click', saveStudySheet);
             
-            if (!topic) {
-                alert('Please enter a topic or text');
+            document.getElementById('closeViewSheetModal').addEventListener('click', closeViewSheetModal);
+            document.getElementById('closeViewBtn').addEventListener('click', closeViewSheetModal);
+            document.getElementById('editSheetBtn').addEventListener('click', editCurrentSheet);
+
+            document.getElementById('closeEventModal').addEventListener('click', closeEventModal);
+            document.getElementById('cancelEventBtn').addEventListener('click', closeEventModal);
+            document.getElementById('saveEventBtn').addEventListener('click', saveCalendarEvent);
+        }
+
+        function toggleAboutContent() {
+            const aboutContent = document.getElementById('aboutContent');
+            const aboutBtn = document.getElementById('aboutWebsiteBtn');
+            
+            if (aboutContent.style.display === 'none') {
+                aboutContent.style.display = 'block';
+                aboutBtn.textContent = 'Hide About';
+            } else {
+                aboutContent.style.display = 'none';
+                aboutBtn.textContent = 'About Website';
+            }
+        }
+
+        function toggleAuthMode() {
+            isSignupMode = !isSignupMode;
+            const authBtn = document.getElementById('authBtn');
+            const authSubtitle = document.getElementById('authSubtitle');
+            const toggleText = document.getElementById('toggleAuthText');
+            const toggleBtn = document.getElementById('toggleAuthMode');
+            
+            if (isSignupMode) {
+                authBtn.textContent = 'Sign Up';
+                authSubtitle.textContent = 'Create your account to get started';
+                toggleText.textContent = 'Already have an account?';
+                toggleBtn.textContent = 'Sign In';
+            } else {
+                authBtn.textContent = 'Sign In';
+                authSubtitle.textContent = 'Sign in to access your study materials';
+                toggleText.textContent = "Don't have an account?";
+                toggleBtn.textContent = 'Sign Up';
+            }
+            
+            document.getElementById('loginError').classList.remove('show');
+        }
+
+        async function handleAuth(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const authBtn = document.getElementById('authBtn');
+            const errorDiv = document.getElementById('loginError');
+            
+            authBtn.disabled = true;
+            authBtn.innerHTML = '<span class="loading"></span>';
+            errorDiv.classList.remove('show');
+            
+            try {
+                if (isSignupMode) {
+                    await createUserWithEmailAndPassword(auth, email, password);
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                }
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.add('show');
+                authBtn.disabled = false;
+                authBtn.textContent = isSignupMode ? 'Sign Up' : 'Sign In';
+            }
+        }
+
+        async function handleLogout() {
+            await signOut(auth);
+        }
+
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            document.getElementById(tabName === 'study-sheets' ? 'study-sheets' : 'calendar-tab').classList.add('active');
+            
+            if (tabName === 'calendar' && calendar) {
+                setTimeout(() => calendar.updateSize(), 100);
+            }
+        }
+
+        // Study Sheets Functions
+        async function loadStudySheets() {
+            const q = query(collection(db, 'study_sheets'), orderBy('created_at', 'desc'));
+            const querySnapshot = await getDocs(q);
+            
+            const sheets = [];
+            querySnapshot.forEach((doc) => {
+                sheets.push({ id: doc.id, ...doc.data() });
+            });
+            
+            renderStudySheets(sheets);
+        }
+
+        function renderStudySheets(sheets) {
+            const grid = document.getElementById('studySheetsGrid');
+            
+            if (sheets.length === 0) {
+                grid.innerHTML = '<p style="color: var(--text-secondary); text-align: center; grid-column: 1/-1;">No study sheets yet. Create your first one!</p>';
+                return;
+            }
+            
+            grid.innerHTML = sheets.map(sheet => `
+                <div class="study-sheet-card" onclick="window.viewStudySheet('${sheet.id}')">
+                    <div class="sheet-header">
+                        <div>
+                            <div class="sheet-title">${escapeHtml(sheet.title)}</div>
+                            <span class="sheet-subject">${escapeHtml(sheet.subject)}</span>
+                        </div>
+                    </div>
+                    <div class="sheet-content">
+                        ${sheet.content.substring(0, 150)}${sheet.content.length > 150 ? '...' : ''}
+                    </div>
+                    <div class="sheet-meta">
+                        Created: ${new Date(sheet.created_at).toLocaleDateString()}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.viewStudySheet = async function(sheetId) {
+            const docSnap = await getDoc(doc(db, 'study_sheets', sheetId));
+
+            if (docSnap.exists()) {
+                const data = { id: docSnap.id, ...docSnap.data() };
+                document.getElementById('viewSheetTitle').textContent = data.title;
+                document.getElementById('viewSheetSubject').innerHTML = `<span class="sheet-subject">${escapeHtml(data.subject)}</span>`;
+                document.getElementById('viewSheetContent').innerHTML = marked.parse(data.content);
+                document.getElementById('viewSheetMeta').innerHTML = `
+                    <strong>Created:</strong> ${new Date(data.created_at).toLocaleString()}<br>
+                    <strong>Last Updated:</strong> ${new Date(data.updated_at).toLocaleString()}
+                `;
+                
+                currentEditingSheet = data;
+                
+                if (isAdmin) {
+                    document.getElementById('editSheetBtn').style.display = 'block';
+                } else {
+                    document.getElementById('editSheetBtn').style.display = 'none';
+                }
+                
+                document.getElementById('viewSheetModal').classList.add('show');
+            }
+        }
+
+        function editCurrentSheet() {
+            closeViewSheetModal();
+            openSheetModal(currentEditingSheet);
+        }
+
+        function openSheetModal(sheet = null) {
+            currentEditingSheet = sheet;
+            
+            if (sheet) {
+                document.getElementById('sheetModalTitle').textContent = 'Edit Study Sheet';
+                document.getElementById('sheetTitle').value = sheet.title;
+                document.getElementById('sheetSubject').value = sheet.subject;
+                document.getElementById('sheetContent').value = sheet.content;
+            } else {
+                document.getElementById('sheetModalTitle').textContent = 'New Study Sheet';
+                document.getElementById('sheetForm').reset();
+            }
+            
+            document.getElementById('sheetModal').classList.add('show');
+        }
+
+        function closeSheetModal() {
+            document.getElementById('sheetModal').classList.remove('show');
+            currentEditingSheet = null;
+        }
+
+        function closeViewSheetModal() {
+            document.getElementById('viewSheetModal').classList.remove('show');
+            currentEditingSheet = null;
+        }
+
+        async function saveStudySheet() {
+            if (!isAdmin) {
+                alert('Only admins can create or edit study sheets.');
                 return;
             }
 
-            document.getElementById('aiGenerateText').style.display = 'none';
-            document.getElementById('aiGenerateLoading').style.display = 'inline-block';
+            const title = document.getElementById('sheetTitle').value;
+            const subject = document.getElementById('sheetSubject').value;
+            const content = document.getElementById('sheetContent').value;
 
-            // Generate smart template-based flashcards
-            const flashcards = generateSmartFlashcards(topic, count);
-            await saveAIFlashcards(flashcards);
-            
-            document.getElementById('aiGeneratorResults').innerHTML = `
-                <div style="padding: 16px; background: rgba(62, 207, 142, 0.1); border: 1px solid var(--primary-color); border-radius: 4px; color: var(--primary-color);">
-                    ✓ Generated ${flashcards.length} flashcards!
-                </div>
-            `;
-            
-            setTimeout(() => {
-                closeAIGeneratorModal();
-                loadFlashcards();
-            }, 2000);
-            
-            document.getElementById('aiGenerateText').style.display = 'inline';
-            document.getElementById('aiGenerateLoading').style.display = 'none';
-        }
-
-        function generateSmartFlashcards(topic, count) {
-            const templates = [
-                { q: `What is ${topic}?`, a: `[Define ${topic} here]` },
-                { q: `Why is ${topic} important?`, a: `[Explain importance of ${topic}]` },
-                { q: `What are the key components of ${topic}?`, a: `[List main components]` },
-                { q: `How does ${topic} work?`, a: `[Explain the process]` },
-                { q: `What are common examples of ${topic}?`, a: `[Provide examples]` },
-                { q: `What are the benefits of ${topic}?`, a: `[List benefits]` },
-                { q: `What challenges are associated with ${topic}?`, a: `[Describe challenges]` },
-                { q: `How is ${topic} used in real life?`, a: `[Give practical applications]` },
-                { q: `What is the history of ${topic}?`, a: `[Explain background]` },
-                { q: `What's the future of ${topic}?`, a: `[Discuss future trends]` }
-            ];
-            
-            return templates.slice(0, count).map(t => ({
-                category: topic,
-                question: t.q,
-                answer: t.a
-            }));
-        }
-
-        async function saveAIFlashcards(flashcards) {
-            for (const card of flashcards) {
-                await addDoc(collection(db, 'flashcards'), {
-                    ...card,
-                    author_id: currentUser.uid,
-                    created_at: new Date().toISOString()
-                });
-            }
-        }
-
-        // Flashcard Functions
-        async function loadFlashcards() {
-            try {
-                const querySnapshot = await getDocs(query(
-                    collection(db, 'flashcards'),
-                    where('author_id', '==', currentUser.uid),
-                    orderBy('created_at', 'desc')
-                ));
-                
-                const grid = document.getElementById('flashcardsGrid');
-                grid.innerHTML = '';
-                
-                querySnapshot.forEach((doc) => {
-                    const flashcard = doc.data();
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
-                        <div class="card-title">${escapeHtml(flashcard.category)}</div>
-                        <div class="card-meta">Created: ${new Date(flashcard.created_at).toLocaleDateString()}</div>
-                        <div class="flashcard" id="flashcard-${doc.id}">
-                            <div class="flashcard-inner">
-                                <div class="flashcard-front">
-                                    <div class="flashcard-text">${escapeHtml(flashcard.question)}</div>
-                                </div>
-                                <div class="flashcard-back">
-                                    <div class="flashcard-text">${escapeHtml(flashcard.answer)}</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-actions">
-                            <button onclick="flipFlashcard('${doc.id}')">Flip Card</button>
-                            <button onclick="editFlashcard('${doc.id}')">Edit</button>
-                            <button class="danger" onclick="deleteFlashcard('${doc.id}')">Delete</button>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
-            } catch (error) {
-                console.error('Error loading flashcards:', error);
-            }
-        }
-
-        window.flipFlashcard = function(id) {
-            document.getElementById('flashcard-' + id).classList.toggle('flipped');
-        }
-
-        window.openFlashcardModal = function(flashcard = null) {
-            currentEditingFlashcard = flashcard;
-            document.getElementById('flashcardModalTitle').textContent = flashcard ? 'Edit Flashcard' : 'New Flashcard';
-            
-            if (flashcard) {
-                document.getElementById('flashcardCategory').value = flashcard.category;
-                document.getElementById('flashcardQuestion').value = flashcard.question;
-                document.getElementById('flashcardAnswer').value = flashcard.answer;
-            } else {
-                document.getElementById('flashcardForm').reset();
-            }
-            
-            document.getElementById('flashcardModal').classList.add('show');
-        }
-
-        window.closeFlashcardModal = function() {
-            document.getElementById('flashcardModal').classList.remove('show');
-            currentEditingFlashcard = null;
-        }
-
-        window.saveFlashcard = async function(event) {
-            event.preventDefault();
-            
-            const flashcardData = {
-                category: document.getElementById('flashcardCategory').value,
-                question: document.getElementById('flashcardQuestion').value,
-                answer: document.getElementById('flashcardAnswer').value,
-                author_id: currentUser.uid
+            const sheetData = {
+                title,
+                subject,
+                content,
+                author_id: currentUser.uid,
+                updated_at: new Date().toISOString()
             };
 
             try {
-                if (currentEditingFlashcard) {
-                    await updateDoc(doc(db, 'flashcards', currentEditingFlashcard.id), {
-                        ...flashcardData,
-                        updated_at: new Date().toISOString()
-                    });
+                if (currentEditingSheet) {
+                    await updateDoc(doc(db, 'study_sheets', currentEditingSheet.id), sheetData);
                 } else {
-                    await addDoc(collection(db, 'flashcards'), {
-                        ...flashcardData,
-                        created_at: new Date().toISOString()
-                    });
+                    sheetData.created_at = new Date().toISOString();
+                    await addDoc(collection(db, 'study_sheets'), sheetData);
                 }
-                closeFlashcardModal();
-                loadFlashcards();
+                closeSheetModal();
+                loadStudySheets();
             } catch (error) {
-                alert('Error saving flashcard: ' + error.message);
-            }
-        }
-
-        window.editFlashcard = async function(flashcardId) {
-            const docSnap = await getDoc(doc(db, 'flashcards', flashcardId));
-            if (docSnap.exists()) {
-                openFlashcardModal({ id: docSnap.id, ...docSnap.data() });
-            }
-        }
-
-        window.deleteFlashcard = async function(flashcardId) {
-            if (confirm('Are you sure you want to delete this flashcard?')) {
-                try {
-                    await deleteDoc(doc(db, 'flashcards', flashcardId));
-                    loadFlashcards();
-                } catch (error) {
-                    alert('Error deleting flashcard: ' + error.message);
-                }
-            }
-        }
-
-        window.startStudyMode = function() {
-            alert('Study mode coming soon! This will show flashcards in a spaced repetition format.');
-        }
-
-        // Goals Functions
-        async function loadGoals() {
-            try {
-                const querySnapshot = await getDocs(query(
-                    collection(db, 'goals'),
-                    where('author_id', '==', currentUser.uid),
-                    orderBy('created_at', 'desc')
-                ));
-                
-                const grid = document.getElementById('goalsGrid');
-                grid.innerHTML = '';
-                
-                querySnapshot.forEach((doc) => {
-                    const goal = doc.data();
-                    const progress = goal.progress || 0;
-                    const deadline = goal.deadline ? new Date(goal.deadline).toLocaleDateString() : 'No deadline';
-                    
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.innerHTML = `
-                        <div class="card-title">${escapeHtml(goal.title)}</div>
-                        <div class="card-meta">Deadline: ${deadline}</div>
-                        <p style="color: var(--text-secondary); margin: 12px 0;">${escapeHtml(goal.description || '')}</p>
-                        <div class="goal-progress">
-                            <div class="goal-progress-bar" style="width: ${progress}%"></div>
-                        </div>
-                        <div style="text-align: right; margin-top: 8px; color: var(--primary-color); font-weight: 600;">${progress}%</div>
-                        <div class="card-actions">
-                            <button onclick="toggleGoalComplete('${doc.id}', ${progress})">${progress >= 100 ? 'Reset' : 'Complete'}</button>
-                            <button onclick="editGoal('${doc.id}')">Edit</button>
-                            <button class="danger" onclick="deleteGoal('${doc.id}')">Delete</button>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                });
-            } catch (error) {
-                console.error('Error loading goals:', error);
-            }
-        }
-
-        window.openGoalModal = function(goal = null) {
-            currentEditingGoal = goal;
-            document.getElementById('goalModalTitle').textContent = goal ? 'Edit Goal' : 'New Goal';
-            
-            if (goal) {
-                document.getElementById('goalTitle').value = goal.title;
-                document.getElementById('goalDescription').value = goal.description || '';
-                document.getElementById('goalDeadline').value = goal.deadline || '';
-                document.getElementById('goalProgress').value = goal.progress || 0;
-            } else {
-                document.getElementById('goalForm').reset();
-            }
-            
-            document.getElementById('goalModal').classList.add('show');
-        }
-
-        window.closeGoalModal = function() {
-            document.getElementById('goalModal').classList.remove('show');
-            currentEditingGoal = null;
-        }
-
-        window.saveGoal = async function(event) {
-            event.preventDefault();
-            
-            const goalData = {
-                title: document.getElementById('goalTitle').value,
-                description: document.getElementById('goalDescription').value,
-                deadline: document.getElementById('goalDeadline').value,
-                progress: parseInt(document.getElementById('goalProgress').value),
-                author_id: currentUser.uid
-            };
-
-            try {
-                if (currentEditingGoal) {
-                    await updateDoc(doc(db, 'goals', currentEditingGoal.id), {
-                        ...goalData,
-                        updated_at: new Date().toISOString()
-                    });
-                } else {
-                    await addDoc(collection(db, 'goals'), {
-                        ...goalData,
-                        created_at: new Date().toISOString()
-                    });
-                }
-                closeGoalModal();
-                loadGoals();
-            } catch (error) {
-                alert('Error saving goal: ' + error.message);
-            }
-        }
-
-        window.editGoal = async function(goalId) {
-            const docSnap = await getDoc(doc(db, 'goals', goalId));
-            if (docSnap.exists()) {
-                openGoalModal({ id: docSnap.id, ...docSnap.data() });
-            }
-        }
-
-        window.deleteGoal = async function(goalId) {
-            if (confirm('Are you sure you want to delete this goal?')) {
-                try {
-                    await deleteDoc(doc(db, 'goals', goalId));
-                    loadGoals();
-                } catch (error) {
-                    alert('Error deleting goal: ' + error.message);
-                }
-            }
-        }
-
-        window.toggleGoalComplete = async function(goalId, currentProgress) {
-            const newProgress = currentProgress >= 100 ? 0 : 100;
-            try {
-                await updateDoc(doc(db, 'goals', goalId), {
-                    progress: newProgress,
-                    updated_at: new Date().toISOString()
-                });
-                loadGoals();
-            } catch (error) {
-                alert('Error updating goal: ' + error.message);
+                alert('Error saving study sheet: ' + error.message);
             }
         }
 
@@ -2112,7 +1595,7 @@ Use Markdown syntax:
             }
         }
 
-        window.saveCalendarEvent = async function() {
+        async function saveCalendarEvent() {
             if (!isAdmin) {
                 alert('Only admins can create or edit calendar events.');
                 return;
@@ -2155,108 +1638,9 @@ Use Markdown syntax:
             }
         }
 
-        window.closeEventModal = function() {
+        function closeEventModal() {
             document.getElementById('eventModal').classList.remove('show');
             currentEditingEvent = null;
-        }
-
-        // Resources Functions
-        async function loadResources() {
-            try {
-                const querySnapshot = await getDocs(query(
-                    collection(db, 'resources'),
-                    orderBy('created_at', 'desc')
-                ));
-                
-                const tbody = document.getElementById('resourcesTableBody');
-                tbody.innerHTML = '';
-                
-                querySnapshot.forEach((doc) => {
-                    const resource = doc.data();
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${escapeHtml(resource.title)}</td>
-                        <td><span style="text-transform: capitalize;">${escapeHtml(resource.category)}</span></td>
-                        <td><a href="${escapeHtml(resource.url)}" target="_blank" class="resource-link">Open Link →</a></td>
-                        <td>
-                            <button onclick="editResource('${doc.id}')" style="margin-right: 8px;">Edit</button>
-                            <button class="danger" onclick="deleteResource('${doc.id}')">Delete</button>
-                        </td>
-                    `;
-                    tbody.appendChild(row);
-                });
-            } catch (error) {
-                console.error('Error loading resources:', error);
-            }
-        }
-
-        window.openResourceModal = function(resource = null) {
-            currentEditingResource = resource;
-            document.getElementById('resourceModalTitle').textContent = resource ? 'Edit Resource' : 'New Resource';
-            
-            if (resource) {
-                document.getElementById('resourceTitle').value = resource.title;
-                document.getElementById('resourceCategory').value = resource.category;
-                document.getElementById('resourceUrl').value = resource.url;
-                document.getElementById('resourceDescription').value = resource.description || '';
-            } else {
-                document.getElementById('resourceForm').reset();
-            }
-            
-            document.getElementById('resourceModal').classList.add('show');
-        }
-
-        window.closeResourceModal = function() {
-            document.getElementById('resourceModal').classList.remove('show');
-            currentEditingResource = null;
-        }
-
-        window.saveResource = async function(event) {
-            event.preventDefault();
-            
-            const resourceData = {
-                title: document.getElementById('resourceTitle').value,
-                category: document.getElementById('resourceCategory').value,
-                url: document.getElementById('resourceUrl').value,
-                description: document.getElementById('resourceDescription').value,
-                author_id: currentUser.uid
-            };
-
-            try {
-                if (currentEditingResource) {
-                    await updateDoc(doc(db, 'resources', currentEditingResource.id), {
-                        ...resourceData,
-                        updated_at: new Date().toISOString()
-                    });
-                } else {
-                    await addDoc(collection(db, 'resources'), {
-                        ...resourceData,
-                        created_at: new Date().toISOString()
-                    });
-                }
-                closeResourceModal();
-                loadResources();
-            } catch (error) {
-                alert('Error saving resource: ' + error.message);
-            }
-        }
-
-        window.editResource = async function(resourceId) {
-            const docSnap = await getDoc(doc(db, 'resources', resourceId));
-            if (docSnap.exists()) {
-                openResourceModal({ id: docSnap.id, ...docSnap.data() });
-            }
-        }
-
-        window.deleteResource = async function(resourceId) {
-            if (confirm('Are you sure you want to delete this resource?')) {
-                try {
-                    await deleteDoc(doc(db, 'resources', resourceId));
-                    loadResources();
-                } catch (error) {
-                    alert('Error deleting resource: ' + error.message);
-                }
-            }
         }
 
         function escapeHtml(text) {
