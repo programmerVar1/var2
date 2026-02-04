@@ -3,351 +3,324 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KENNETH_MAIN_SYSTEM</title>
+    <title>Kenneth's Study Hub</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Courier+Prime&display=swap" rel="stylesheet">
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-
+    
     <style>
         :root {
-            --matrix-green: #3ecf8e;
-            --matrix-glow: 0 0 20px rgba(62, 207, 142, 0.4);
-            --bg-black: #020202;
-            --ui-blue: #0f172a;
-            --ui-border: #1e293b;
-            --danger-red: #f04949;
+            --primary: #3ecf8e;
+            --primary-dark: #2fb87a;
+            --bg: #000000;
+            --surface: #0d1117;
+            --text-primary: #f4fffa;
+            --text-secondary: #8b9aad;
+            --border: #2d3748;
+            --glow: 0 0 15px rgba(62, 207, 142, 0.3);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Montserrat', sans-serif;
-            background: var(--bg-black);
-            color: #ffffff;
-            height: 100vh;
-            overflow: hidden;
-            font-size: 14px;
+            background: var(--bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
         }
 
-        #matrix-canvas {
+        /* Matrix Background */
+        #matrix-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.25;
+            z-index: -1; opacity: 0.15;
         }
 
-        /* --- BOOT / LOGIN SCREEN --- */
-        #login-screen {
-            display: flex; justify-content: center; align-items: center; height: 100vh;
-            background: radial-gradient(circle, rgba(15,23,42,1) 0%, rgba(0,0,0,1) 100%);
+        /* Login Page */
+        .login-container {
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
-        .terminal-box {
-            width: 450px; background: rgba(0,0,0,0.9); border: 2px solid var(--matrix-green);
-            box-shadow: var(--matrix-glow); padding: 40px; font-family: 'Share Tech Mono', monospace;
+        .login-card {
+            background: rgba(13, 17, 23, 0.95);
+            border: 2px solid var(--primary);
+            padding: 48px; width: 100%; max-width: 420px;
+            box-shadow: var(--glow);
+            font-family: 'Courier Prime', monospace;
         }
-        .terminal-header { color: var(--matrix-green); margin-bottom: 25px; font-size: 1.5rem; letter-spacing: 2px; }
+        .login-card::before {
+            content: '> SYSTEM ACCESS TERMINAL';
+            display: block; background: var(--primary); color: #000;
+            padding: 5px 10px; margin-bottom: 20px; font-size: 12px; font-weight: bold;
+        }
 
-        /* --- MAIN SYSTEM LAYOUT --- */
-        #main-system { display: none; height: 100vh; flex-direction: column; }
-        #main-system.active { display: flex; }
+        /* Main App Layout */
+        .app-container { display: none; min-height: 100vh; }
+        .app-container.active { display: block; }
 
         nav {
-            height: 60px; border-bottom: 1px solid var(--matrix-green);
-            background: rgba(0,0,0,0.8); display: flex; align-items: center;
-            padding: 0 30px; justify-content: space-between; z-index: 10;
-        }
-
-        /* --- DASHBOARD --- */
-        .workspace { flex-grow: 1; padding: 40px; overflow-y: auto; }
-        .grid-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
-
-        .data-node {
-            background: var(--ui-blue); border: 1px solid var(--ui-border);
-            padding: 25px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-left: 4px solid var(--matrix-green);
-        }
-        .data-node:hover {
-            border-color: var(--matrix-green); transform: scale(1.02);
-            box-shadow: var(--matrix-glow);
-        }
-
-        /* --- FULLSCREEN INTERFACE --- */
-        #interface-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-black); z-index: 100; display: none;
-            flex-direction: column; animation: slideIn 0.4s ease-out;
-        }
-        #interface-overlay.active { display: flex; }
-
-        .interface-header {
-            padding: 20px 40px; border-bottom: 2px solid var(--matrix-green);
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 2px solid var(--primary);
+            padding: 16px 40px;
             display: flex; justify-content: space-between; align-items: center;
         }
 
-        /* --- FLASHCARD SYSTEM (THE BIG THING) --- */
-        .stage { flex-grow: 1; display: flex; align-items: center; justify-content: center; position: relative; }
-        .flash-card-massive {
-            width: 800px; height: 450px; perspective: 1200px; cursor: pointer;
+        .main-content { max-width: 1400px; margin: 0 auto; padding: 32px; }
+
+        /* Tabs */
+        .tabs { display: flex; gap: 10px; margin-bottom: 32px; border-bottom: 1px solid var(--border); }
+        .tab {
+            padding: 12px 20px; background: none; border: none; color: var(--text-secondary);
+            cursor: pointer; font-weight: bold; transition: 0.2s;
+        }
+        .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Grid & Cards */
+        .study-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .sheet-card {
+            background: var(--surface); border: 1px solid var(--primary);
+            padding: 24px; cursor: pointer; transition: 0.2s;
+            font-family: 'Courier Prime', monospace;
+        }
+        .sheet-card:hover { transform: translateX(5px); box-shadow: var(--glow); }
+        .sheet-card h3 { color: var(--primary); margin-bottom: 10px; }
+
+        /* TERMINAL MODAL (No more Alerts) */
+        .modal {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--surface); border: 2px solid var(--primary);
+            padding: 30px; width: 600px; font-family: 'Courier Prime', monospace;
+        }
+
+        /* Forms */
+        input, textarea {
+            width: 100%; background: #000; border: 1px solid var(--primary);
+            padding: 12px; color: var(--primary); margin: 10px 0; font-family: 'Courier Prime';
+        }
+        .btn {
+            padding: 10px 20px; background: var(--primary); border: none; color: #000;
+            font-weight: bold; cursor: pointer; text-transform: uppercase;
+        }
+
+        /* Flashcard Styling */
+        .card-box {
+            width: 500px; height: 300px; margin: 0 auto; perspective: 1000px; cursor: pointer;
         }
         .card-inner {
-            position: relative; width: 100%; height: 100%; transition: transform 0.7s; transform-style: preserve-3d;
+            position: relative; width: 100%; height: 100%; text-align: center;
+            transition: transform 0.6s; transform-style: preserve-3d;
         }
-        .flash-card-massive.flipped .card-inner { transform: rotateY(180deg); }
-        .face {
+        .card-box.flipped .card-inner { transform: rotateY(180deg); }
+        .card-face {
             position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
             display: flex; align-items: center; justify-content: center;
-            padding: 50px; text-align: center; border: 5px solid var(--matrix-green);
-            background: #0a0f1a; font-size: 2.8rem; font-family: 'Share Tech Mono';
+            border: 2px solid var(--primary); background: var(--surface); font-size: 1.5rem; padding: 20px;
         }
-        .face-back { transform: rotateY(180deg); background: var(--matrix-green); color: #000; }
+        .card-back { transform: rotateY(180deg); background: var(--primary); color: #000; }
 
-        /* --- SYSTEM PROMPT (THE REAL INPUT) --- */
-        #system-prompt {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.85); z-index: 500; display: none;
-            justify-content: center; align-items: center;
+        /* Quiz Styling */
+        .quiz-option {
+            padding: 15px; border: 1px solid var(--border); margin: 10px 0;
+            cursor: pointer; transition: 0.2s;
         }
-        #system-prompt.active { display: flex; }
-
-        /* --- UI COMPONENTS --- */
-        .os-btn {
-            background: var(--matrix-green); color: #000; border: none;
-            padding: 12px 25px; font-family: 'Share Tech Mono'; font-weight: bold;
-            cursor: pointer; text-transform: uppercase; transition: 0.2s;
-        }
-        .os-btn:hover { background: #fff; box-shadow: var(--matrix-glow); }
-        .os-btn.danger { background: var(--danger-red); color: #fff; }
-
-        input, textarea {
-            width: 100%; background: #000; border: 1px solid var(--matrix-green);
-            padding: 15px; color: var(--matrix-green); font-family: 'Share Tech Mono';
-            margin-bottom: 20px; font-size: 1.1rem;
-        }
-
-        @keyframes slideIn { from { transform: translateY(100%); } to { transform: translateY(0); } }
-
-        /* FullCalendar Overrides */
-        .fc { background: #0a0f1a; padding: 20px; border: 1px solid var(--ui-border); color: #fff; }
+        .quiz-option:hover { border-color: var(--primary); background: rgba(62,207,142,0.1); }
     </style>
 </head>
 <body>
 
-<canvas id="matrix-canvas"></canvas>
+    <canvas id="matrix-bg"></canvas>
 
-<section id="login-screen">
-    <div class="terminal-box">
-        <div class="terminal-header">> SYSTEM_BOOT_SEQUENCE</div>
-        <form id="login-form">
-            <input type="text" id="user-id" placeholder="ENTER_USER_ID" required autocomplete="off">
-            <input type="password" id="access-key" placeholder="ENTER_ACCESS_KEY" required>
-            <button type="submit" class="os-btn" style="width:100%">EXECUTE_LOGIN</button>
-        </form>
-    </div>
-</section>
-
-<section id="main-system">
-    <nav>
-        <div style="font-family:'Share Tech Mono'; font-size:22px; color:var(--matrix-green)">KENNETH_OS_v4.0</div>
-        <div id="sys-clock" style="font-family:'Share Tech Mono'">00:00:00</div>
-    </nav>
-
-    <div class="workspace">
-        <div style="display:flex; justify-content:space-between; margin-bottom:40px;">
-            <h1 style="font-family:'Share Tech Mono';">> DATA_ARCHIVES</h1>
-            <button class="os-btn" onclick="togglePrompt(true)">+ UPLOAD_DATA_STREAM</button>
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <h2 style="color:var(--primary); margin-bottom:20px;">📚 Kenneth's Study Hub</h2>
+            <form id="authForm">
+                <label>> EMAIL</label>
+                <input type="email" id="email" required>
+                <label>> PASSWORD</label>
+                <input type="password" id="password" required>
+                <button type="submit" class="btn" style="width:100%; margin-top:10px;">Login</button>
+            </form>
         </div>
+    </div>
 
-        <div class="grid-container" id="node-grid">
+    <div id="appContainer" class="app-container">
+        <nav>
+            <div style="font-family:'Courier Prime'; color:var(--primary); font-weight:bold;">📚 KENNETH_STUDY_HUB</div>
+            <button class="btn" onclick="location.reload()" style="font-size:12px;">Logout</button>
+        </nav>
+
+        <main class="main-content">
+            <div class="tabs">
+                <button class="tab active" data-tab="sheets-tab">Study Sheets</button>
+                <button class="tab" data-tab="cards-tab">Flashcards</button>
+                <button class="tab" data-tab="quiz-tab">Quizzes</button>
+                <button class="tab" data-tab="calendar-tab">Calendar</button>
             </div>
 
-        <div style="margin-top:60px;">
-            <h2 style="font-family:'Share Tech Mono'; margin-bottom:20px;">> MISSION_CALENDAR</h2>
-            <div id="calendar"></div>
-        </div>
-    </div>
-</section>
-
-<section id="interface-overlay">
-    <div class="interface-header">
-        <h2 id="interface-title" style="font-family:'Share Tech Mono'; color:var(--matrix-green)">STREAMING_DATA...</h2>
-        <button class="os-btn danger" onclick="closeInterface()">TERMINATE_CONNECTION [X]</button>
-    </div>
-
-    <div style="display:flex; padding: 20px 40px; gap:20px; background:#050505;">
-        <button class="os-btn" onclick="switchMode('flash')">RECALL_CARDS</button>
-        <button class="os-btn" onclick="switchMode('quiz')">ASSESSMENT_MODE</button>
-    </div>
-
-    <div id="flash-stage" class="stage">
-        <div class="flash-card-massive" id="main-card" onclick="this.classList.toggle('flipped')">
-            <div class="card-inner">
-                <div class="face face-front" id="card-q">FRONT_DATA</div>
-                <div class="face face-back" id="card-a">BACK_DATA</div>
+            <div id="sheets-tab" class="tab-content active">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px;">
+                    <h2>Active Sheets</h2>
+                    <button class="btn" onclick="toggleModal('sheetModal', true)">+ New Sheet</button>
+                </div>
+                <div id="sheetGrid" class="study-grid"></div>
             </div>
-        </div>
-        <div style="position:absolute; bottom:50px; display:flex; gap:30px;">
-            <button class="os-btn" onclick="changeCard(-1)">< PREVIOUS</button>
-            <button class="os-btn" onclick="changeCard(1)">NEXT ></button>
-        </div>
-    </div>
 
-    <div id="quiz-stage" class="workspace" style="display:none; padding-top:20px;">
-        <div id="quiz-flow" style="max-width:800px; margin: 0 auto;"></div>
-    </div>
-</section>
-
-<section id="system-prompt">
-    <div class="terminal-box" style="width:600px;">
-        <div class="terminal-header">> DATA_INPUT_TERMINAL</div>
-        <input type="text" id="new-title" placeholder="ARCHIVE_NAME">
-        <textarea id="new-content" placeholder="A :: B (Cards) | Q? [A,B] *A (Quiz)" rows="8"></textarea>
-        <div style="display:flex; gap:10px;">
-            <button class="os-btn" onclick="saveNewNode()">COMMIT_TO_MEMORY</button>
-            <button class="os-btn danger" onclick="togglePrompt(false)">ABORT</button>
-        </div>
-    </div>
-</section>
-
-<script>
-    // --- DATA STORE ---
-    let db = [
-        { id: 1, title: "CYBER_SECURITY", content: "Phishing :: Fraudulent emails to steal data\nFirewall :: Network security system\nWhat is 2FA? [2 Factor, 2 Files, 2 Fins] *2 Factor" }
-    ];
-    let activeCards = [];
-    let activeQuiz = [];
-    let cardPointer = 0;
-
-    // --- MATRIX BACKGROUND ---
-    const c = document.getElementById('matrix-canvas');
-    const x = c.getContext('2d');
-    function matrix() {
-        c.width = window.innerWidth; c.height = window.innerHeight;
-        const drops = Array(Math.floor(c.width/16)).fill(1);
-        setInterval(() => {
-            x.fillStyle = 'rgba(0,0,0,0.05)'; x.fillRect(0,0,c.width,c.height);
-            x.fillStyle = '#3ecf8e'; x.font = '16px monospace';
-            drops.forEach((y, i) => {
-                x.fillText(String.fromCharCode(0x30A0 + Math.random()*33), i*16, y*16);
-                if(y*16 > c.height && Math.random() > 0.98) drops[i] = 0;
-                drops[i]++;
-            });
-        }, 40);
-    }
-    matrix();
-
-    // --- SYSTEM CLOCK ---
-    setInterval(() => { 
-        document.getElementById('sys-clock').innerText = new Date().toLocaleTimeString(); 
-    }, 1000);
-
-    // --- LOGIN LOGIC ---
-    document.getElementById('login-form').onsubmit = (e) => {
-        e.preventDefault();
-        document.getElementById('login-screen').style.display = 'none';
-        document.getElementById('main-system').classList.add('active');
-        renderNodes();
-        initCalendar();
-    };
-
-    // --- NODE MANAGEMENT ---
-    function renderNodes() {
-        const grid = document.getElementById('node-grid');
-        grid.innerHTML = db.map(node => `
-            <div class="data-node" onclick="launchInterface(${node.id})">
-                <h3 style="font-family:'Share Tech Mono'; color:var(--matrix-green); margin-bottom:10px;">> ${node.title}</h3>
-                <p style="color:#8b9aad; font-size:12px;">STATUS: ENCRYPTED_READY</p>
-            </div>
-        `).join('');
-    }
-
-    function togglePrompt(show) {
-        document.getElementById('system-prompt').classList.toggle('active', show);
-    }
-
-    function saveNewNode() {
-        const t = document.getElementById('new-title').value;
-        const c = document.getElementById('new-content').value;
-        if(t && c) {
-            db.push({ id: Date.now(), title: t.toUpperCase(), content: c });
-            renderNodes();
-            togglePrompt(false);
-            document.getElementById('new-title').value = '';
-            document.getElementById('new-content').value = '';
-        }
-    }
-
-    // --- FULLSCREEN INTERFACE LOGIC ---
-    function launchInterface(id) {
-        const node = db.find(n => n.id === id);
-        document.getElementById('interface-title').innerText = `STREAMING_DATA: ${node.title}`;
-        document.getElementById('interface-overlay').classList.add('active');
-        
-        // Parse Content
-        activeCards = []; activeQuiz = [];
-        node.content.split('\n').forEach(line => {
-            if(line.includes('::')) {
-                const [q, a] = line.split('::');
-                activeCards.push({ q: q.trim(), a: a.trim() });
-            }
-            if(line.includes('?')) {
-                const q = line.split('?')[0] + '?';
-                const options = line.match(/\[(.*?)\]/)[1].split(',').map(o => o.trim());
-                const ans = line.split('*')[1].trim();
-                activeQuiz.push({ q, options, ans });
-            }
-        });
-        
-        cardPointer = 0;
-        switchMode('flash');
-        updateCardUI();
-        updateQuizUI();
-    }
-
-    function closeInterface() {
-        document.getElementById('interface-overlay').classList.remove('active');
-    }
-
-    function switchMode(mode) {
-        document.getElementById('flash-stage').style.display = mode === 'flash' ? 'flex' : 'none';
-        document.getElementById('quiz-stage').style.display = mode === 'quiz' ? 'block' : 'none';
-    }
-
-    function updateCardUI() {
-        if(activeCards.length === 0) return;
-        document.getElementById('card-q').innerText = activeCards[cardPointer].q;
-        document.getElementById('card-a').innerText = activeCards[cardPointer].a;
-        document.getElementById('main-card').classList.remove('flipped');
-    }
-
-    function changeCard(dir) {
-        cardPointer = (cardPointer + dir + activeCards.length) % activeCards.length;
-        updateCardUI();
-    }
-
-    function updateQuizUI() {
-        const flow = document.getElementById('quiz-flow');
-        flow.innerHTML = activeQuiz.map((q, i) => `
-            <div style="background:#0a0f1a; padding:30px; border:1px solid var(--ui-border); margin-bottom:30px;">
-                <h2 style="color:var(--matrix-green); margin-bottom:20px; font-family:'Share Tech Mono'">${i+1}. ${q.q}</h2>
-                <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-                    ${q.options.map(opt => `<button class="os-btn" onclick="checkAnswer(this, '${opt}', '${q.ans}')">${opt}</button>`).join('')}
+            <div id="cards-tab" class="tab-content">
+                <div class="card-box" id="flashcard" onclick="this.classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-face" id="cardFront">Select a sheet first</div>
+                        <div class="card-face card-back" id="cardBack">...</div>
+                    </div>
+                </div>
+                <div style="text-align:center; margin-top:20px;">
+                    <button class="btn" onclick="changeCard(-1)">Prev</button>
+                    <button class="btn" onclick="changeCard(1)">Next</button>
                 </div>
             </div>
-        `).join('');
-    }
 
-    function checkAnswer(btn, sel, cor) {
-        btn.style.background = (sel === cor) ? "var(--matrix-green)" : "var(--danger-red)";
-        btn.style.color = "#000";
-    }
+            <div id="quiz-tab" class="tab-content">
+                <div id="quizContainer" style="max-width:600px; margin:0 auto;">
+                    <p style="text-align:center; color:var(--text-secondary)">Load a sheet with quiz data to start.</p>
+                </div>
+            </div>
 
-    function initCalendar() {
-        const calEl = document.getElementById('calendar');
-        new FullCalendar.Calendar(calEl, {
-            initialView: 'dayGridMonth',
-            headerToolbar: { left: 'prev,next today', center: 'title', right: 'dayGridMonth,dayGridWeek' }
-        }).render();
-    }
-</script>
+            <div id="calendar-tab" class="tab-content">
+                <div id="calendar" style="background:var(--surface); padding:20px;"></div>
+            </div>
+        </main>
+    </div>
 
+    <div id="sheetModal" class="modal">
+        <div class="modal-content">
+            <h3 style="color:var(--primary)">> CREATE_NEW_SHEET</h3>
+            <input type="text" id="newTitle" placeholder="Title (e.g. Science 101)">
+            <textarea id="newContent" rows="8" placeholder="Format:&#10;Term :: Definition&#10;Question? [Opt1, Opt2] *Answer"></textarea>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" onclick="saveSheet()">Save</button>
+                <button class="btn" style="background:var(--border); color:#fff;" onclick="toggleModal('sheetModal', false)">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let db = [
+            { id: 1, title: "Biology Basics", content: "Mitochondria :: Powerhouse of the cell\nNucleus :: Control center\nWhat is the pH of water? [5, 7, 9] *7" }
+        ];
+        let currentCards = [];
+        let currentQuiz = [];
+        let cardIdx = 0;
+
+        // Matrix Effect
+        const c = document.getElementById('matrix-bg');
+        const ctx = c.getContext('2d');
+        function matrix() {
+            c.width = window.innerWidth; c.height = window.innerHeight;
+            const drops = Array(Math.floor(c.width/16)).fill(1);
+            setInterval(() => {
+                ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0,0,c.width,c.height);
+                ctx.fillStyle = '#3ecf8e'; ctx.font = '16px monospace';
+                drops.forEach((y, i) => {
+                    ctx.fillText(String.fromCharCode(0x30A0+Math.random()*33), i*16, y*16);
+                    if(y*16 > c.height && Math.random() > 0.98) drops[i] = 0;
+                    drops[i]++;
+                });
+            }, 40);
+        }
+        matrix();
+
+        // Login Logic
+        document.getElementById('authForm').onsubmit = (e) => {
+            e.preventDefault();
+            document.getElementById('loginPage').style.display = 'none';
+            document.getElementById('appContainer').classList.add('active');
+            renderSheets();
+            new FullCalendar.Calendar(document.getElementById('calendar'), { initialView: 'dayGridMonth' }).render();
+        };
+
+        // Tab Logic
+        document.querySelectorAll('.tab').forEach(t => {
+            t.onclick = () => {
+                document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
+                t.classList.add('active');
+                document.getElementById(t.dataset.tab).classList.add('active');
+                if(t.dataset.tab === 'calendar-tab') window.dispatchEvent(new Event('resize'));
+            };
+        });
+
+        // Sheets Logic
+        function renderSheets() {
+            const grid = document.getElementById('sheetGrid');
+            grid.innerHTML = db.map(s => `
+                <div class="sheet-card" onclick="loadTools(${s.id})">
+                    <h3>> ${s.title}</h3>
+                    <p style="font-size:12px; color:var(--text-secondary)">Click to activate tools</p>
+                </div>
+            `).join('');
+        }
+
+        function loadTools(id) {
+            const s = db.find(x => x.id === id);
+            currentCards = []; currentQuiz = [];
+            s.content.split('\n').forEach(line => {
+                if(line.includes('::')) {
+                    const [q, a] = line.split('::');
+                    currentCards.push({q: q.trim(), a: a.trim()});
+                }
+                if(line.includes('?')) {
+                    const q = line.split('?')[0] + '?';
+                    const opts = line.match(/\[(.*?)\]/)[1].split(',').map(o => o.trim());
+                    const ans = line.split('*')[1].trim();
+                    currentQuiz.push({q, opts, ans});
+                }
+            });
+            cardIdx = 0;
+            updateCard();
+            updateQuiz();
+            // Switch to flashcards tab automatically
+            document.querySelector('[data-tab="cards-tab"]').click();
+        }
+
+        function updateCard() {
+            if(!currentCards[cardIdx]) return;
+            document.getElementById('cardFront').innerText = currentCards[cardIdx].q;
+            document.getElementById('cardBack').innerText = currentCards[cardIdx].a;
+            document.getElementById('flashcard').classList.remove('flipped');
+        }
+
+        window.changeCard = (n) => {
+            cardIdx = (cardIdx + n + currentCards.length) % currentCards.length;
+            updateCard();
+        };
+
+        function updateQuiz() {
+            const cont = document.getElementById('quizContainer');
+            cont.innerHTML = currentQuiz.map((q, i) => `
+                <div style="margin-bottom:30px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+                    <p style="color:var(--primary)">${i+1}. ${q.q}</p>
+                    ${q.opts.map(o => `<div class="quiz-option" onclick="this.style.background='${o===q.ans?'rgba(62,207,142,0.3)':'rgba(240,73,73,0.3)'}'">${o}</div>`).join('')}
+                </div>
+            `).join('');
+        }
+
+        // Modal Logic
+        window.toggleModal = (id, show) => document.getElementById(id).classList.toggle('active', show);
+        
+        window.saveSheet = () => {
+            const t = document.getElementById('newTitle').value;
+            const c = document.getElementById('newContent').value;
+            if(t && c) {
+                db.push({ id: Date.now(), title: t, content: c });
+                renderSheets();
+                toggleModal('sheetModal', false);
+                document.getElementById('newTitle').value = '';
+                document.getElementById('newContent').value = '';
+            }
+        };
+    </script>
 </body>
 </html>
