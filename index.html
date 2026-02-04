@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kenneth's Study Hub - ULTIMATE MEGA EDITION</title>
+    <title>Kenneth's Study Hub</title>
     
+    <!-- Google Fonts - Montserrat -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FullCalendar CSS -->
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+    
+    <!-- Marked.js for Markdown rendering -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
+    <!-- FullCalendar JS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     
     <style>
         * {
@@ -21,31 +27,35 @@
         }
 
         :root {
-            --primary: #3ecf8e;
+            --primary-color: #3ecf8e;
             --primary-dark: #2fb87a;
             --primary-light: #4fffb0;
-            --bg: #000000;
-            --bg-light: #0e1117;
+            --secondary-color: #f4fffa;
+            --background: #0e1117;
+            --background-light: #1a1f2e;
             --surface: #181d27;
             --surface-hover: #1f2937;
-            --text: #f4fffa;
+            --text-primary: #f4fffa;
             --text-secondary: #8b9aad;
-            --border: #2d3748;
+            --border-color: #2d3748;
+            --success: #3ecf8e;
             --danger: #f04949;
             --warning: #f59e0b;
-            --success: #10b981;
-            --info: #3b82f6;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
+            --glow: 0 0 20px rgba(62, 207, 142, 0.3);
         }
 
         body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #000000;
             min-height: 100vh;
+            color: var(--text-primary);
             position: relative;
             overflow-x: hidden;
         }
 
+        /* Matrix Rain Background */
         #matrix-bg {
             position: fixed;
             top: 0;
@@ -53,9 +63,10 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            opacity: 0.12;
+            opacity: 0.15;
         }
 
+        /* Scanline effect */
         body::before {
             content: '';
             position: fixed;
@@ -63,9 +74,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.15), rgba(0,0,0,0.15) 1px, transparent 1px, transparent 2px);
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
             pointer-events: none;
-            z-index: 999;
+            z-index: 1000;
             animation: scanline 8s linear infinite;
         }
 
@@ -74,7 +91,7 @@
             100% { transform: translateY(10px); }
         }
 
-        /* Login */
+        /* Login Page Styles */
         .login-container {
             display: flex;
             justify-content: center;
@@ -87,11 +104,13 @@
 
         .login-card {
             background: rgba(13, 17, 23, 0.95);
-            border: 2px solid var(--primary);
+            border: 2px solid var(--primary-color);
             padding: 48px;
+            border-radius: 4px;
+            box-shadow: 0 0 30px rgba(62, 207, 142, 0.3), inset 0 0 30px rgba(62, 207, 142, 0.05);
             width: 100%;
             max-width: 420px;
-            animation: fadeIn 0.5s, glow 2s infinite;
+            animation: fadeIn 0.5s ease-in, glow-pulse 2s ease-in-out infinite;
             position: relative;
         }
 
@@ -102,7 +121,7 @@
             left: -2px;
             right: -2px;
             padding: 8px 16px;
-            background: var(--primary);
+            background: var(--primary-color);
             color: #000;
             font-size: 11px;
             font-weight: 700;
@@ -110,14 +129,20 @@
             font-family: 'Courier New', monospace;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes glow-pulse {
+            0%, 100% { box-shadow: 0 0 30px rgba(62, 207, 142, 0.3), inset 0 0 30px rgba(62, 207, 142, 0.05); }
+            50% { box-shadow: 0 0 40px rgba(62, 207, 142, 0.5), inset 0 0 40px rgba(62, 207, 142, 0.08); }
         }
 
-        @keyframes glow {
-            0%, 100% { box-shadow: 0 0 30px rgba(62,207,142,0.3), inset 0 0 30px rgba(62,207,142,0.05); }
-            50% { box-shadow: 0 0 40px rgba(62,207,142,0.5), inset 0 0 40px rgba(62,207,142,0.08); }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .login-header {
@@ -127,12 +152,13 @@
         }
 
         .login-header h1 {
-            color: var(--primary);
+            color: var(--primary-color);
             font-size: 32px;
             font-weight: 700;
             margin-bottom: 8px;
-            text-shadow: 0 0 10px rgba(62,207,142,0.5);
+            text-shadow: 0 0 10px rgba(62, 207, 142, 0.5);
             font-family: 'Courier New', monospace;
+            letter-spacing: -1px;
         }
 
         .login-header p {
@@ -149,7 +175,7 @@
         .form-group label {
             display: block;
             margin-bottom: 8px;
-            color: var(--primary);
+            color: var(--primary-color);
             font-weight: 600;
             font-size: 12px;
             text-transform: uppercase;
@@ -159,33 +185,41 @@
 
         .form-group label::before {
             content: '> ';
+            color: var(--primary-color);
         }
 
         .form-group input {
             width: 100%;
             padding: 12px 16px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--primary);
-            color: var(--primary);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
+            color: var(--primary-color);
             font-size: 14px;
             font-family: 'Courier New', monospace;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
         }
 
         .form-group input:focus {
             outline: none;
-            box-shadow: 0 0 10px rgba(62,207,142,0.5), inset 0 0 10px rgba(62,207,142,0.1);
-            background: rgba(0,0,0,0.7);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(62, 207, 142, 0.5), inset 0 0 10px rgba(62, 207, 142, 0.1);
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(62, 207, 142, 0.4);
         }
 
         .btn {
             width: 100%;
             padding: 12px 24px;
-            border: 2px solid var(--primary);
+            border: 2px solid var(--primary-color);
+            border-radius: 0;
             font-size: 14px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             text-transform: uppercase;
             letter-spacing: 2px;
             font-family: 'Courier New', monospace;
@@ -200,7 +234,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(62,207,142,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(62, 207, 142, 0.3), transparent);
             transition: left 0.5s;
         }
 
@@ -209,26 +243,29 @@
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: var(--primary-color);
             color: #000;
         }
 
         .btn-primary:hover {
             background: var(--primary-light);
-            box-shadow: 0 0 20px rgba(62,207,142,0.6);
+            box-shadow: 0 0 20px rgba(62, 207, 142, 0.6);
             transform: translateY(-2px);
         }
 
         .btn-primary:disabled {
-            opacity: 0.5;
+            background: var(--border-color);
             cursor: not-allowed;
+            box-shadow: none;
+            opacity: 0.5;
         }
 
         .error-message {
-            background: rgba(240,73,73,0.1);
+            background: rgba(240, 73, 73, 0.1);
             border: 1px solid var(--danger);
             color: var(--danger);
             padding: 12px 16px;
+            border-radius: 0;
             margin-bottom: 20px;
             font-size: 12px;
             font-family: 'Courier New', monospace;
@@ -242,7 +279,7 @@
 
         .error-message.show {
             display: block;
-            animation: blink 0.5s 3;
+            animation: blink 0.5s ease-in-out 3;
         }
 
         @keyframes blink {
@@ -250,19 +287,22 @@
             50% { opacity: 0.5; }
         }
 
-        /* App */
+        /* Main App Styles */
         .app-container {
             display: none;
+            background: var(--background);
+            min-height: 100vh;
         }
 
         .app-container.show {
             display: block;
         }
 
+        /* Header/Navbar */
         .navbar {
-            background: rgba(0,0,0,0.9);
-            border-bottom: 2px solid var(--primary);
-            box-shadow: 0 0 20px rgba(62,207,142,0.3);
+            background: rgba(0, 0, 0, 0.9);
+            border-bottom: 2px solid var(--primary-color);
+            box-shadow: 0 0 20px rgba(62, 207, 142, 0.3);
             padding: 16px 0;
             position: sticky;
             top: 0;
@@ -282,9 +322,12 @@
         .navbar-brand {
             font-size: 18px;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
             font-family: 'Courier New', monospace;
-            text-shadow: 0 0 10px rgba(62,207,142,0.5);
+            text-shadow: 0 0 10px rgba(62, 207, 142, 0.5);
             letter-spacing: 1px;
         }
 
@@ -309,9 +352,9 @@
 
         .user-name {
             font-weight: 600;
-            color: var(--primary);
+            color: var(--primary-color);
             font-size: 13px;
-            text-shadow: 0 0 5px rgba(62,207,142,0.5);
+            text-shadow: 0 0 5px rgba(62, 207, 142, 0.5);
         }
 
         .user-name::before {
@@ -320,35 +363,44 @@
             font-size: 11px;
         }
 
+        .user-role {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
         .admin-badge {
-            background: var(--primary);
+            background: var(--primary-color);
             color: #000;
             padding: 2px 8px;
+            border-radius: 0;
             font-size: 10px;
             font-weight: 700;
             letter-spacing: 1px;
+            animation: glow-pulse 2s ease-in-out infinite;
         }
 
         .btn-logout {
             padding: 8px 16px;
             background: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
             font-size: 12px;
             font-weight: 700;
             cursor: pointer;
+            transition: all 0.2s ease;
             font-family: 'Courier New', monospace;
             letter-spacing: 1px;
             text-transform: uppercase;
-            transition: all 0.2s;
         }
 
         .btn-logout:hover {
-            background: var(--primary);
+            background: var(--primary-color);
             color: #000;
-            box-shadow: 0 0 15px rgba(62,207,142,0.5);
+            box-shadow: 0 0 15px rgba(62, 207, 142, 0.5);
         }
 
+        /* Main Content */
         .main-content {
             max-width: 1400px;
             margin: 0 auto;
@@ -359,8 +411,7 @@
             display: flex;
             gap: 8px;
             margin-bottom: 32px;
-            border-bottom: 1px solid var(--border);
-            flex-wrap: wrap;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .tab {
@@ -368,23 +419,22 @@
             background: none;
             border: none;
             color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 500;
             cursor: pointer;
             position: relative;
-            transition: all 0.2s;
-            font-family: 'Courier New', monospace;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            border-radius: 6px 6px 0 0;
         }
 
         .tab:hover {
-            color: var(--text);
+            color: var(--text-primary);
             background: var(--surface-hover);
         }
 
         .tab.active {
-            color: var(--primary);
+            color: var(--primary-color);
+            background: transparent;
         }
 
         .tab.active::after {
@@ -394,8 +444,8 @@
             left: 0;
             right: 0;
             height: 2px;
-            background: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
+            background: var(--primary-color);
+            box-shadow: var(--glow);
         }
 
         .tab-content {
@@ -404,72 +454,38 @@
 
         .tab-content.active {
             display: block;
-            animation: fadeIn 0.3s;
+            animation: fadeIn 0.3s ease-in;
         }
 
+        /* Study Sheets Section */
         .section-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
-            flex-wrap: wrap;
-            gap: 16px;
         }
 
         .section-header h2 {
             font-size: 28px;
-            font-weight: 700;
-            color: var(--text);
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-
-        .btn-add, .btn-action {
+        .btn-add {
             padding: 10px 20px;
-            background: var(--primary);
-            color: #000;
+            background: var(--primary-color);
+            color: var(--background);
             border: none;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Courier New', monospace;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .btn-add:hover, .btn-action:hover {
-            background: var(--primary-light);
-            box-shadow: 0 0 15px rgba(62,207,142,0.5);
-        }
-
-        .filter-buttons {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 8px 16px;
-            background: transparent;
-            color: var(--text-secondary);
-            border: 1px solid var(--border);
-            font-size: 11px;
+            border-radius: 6px;
+            font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Courier New', monospace;
-            text-transform: uppercase;
+            transition: all 0.2s ease;
         }
 
-        .filter-btn.active {
-            background: var(--primary);
-            color: #000;
-            border-color: var(--primary);
+        .btn-add:hover {
+            background: var(--primary-light);
+            box-shadow: var(--glow);
         }
 
         .study-sheets-grid {
@@ -479,11 +495,12 @@
         }
 
         .study-sheet-card {
-            background: rgba(13,17,23,0.8);
-            border: 1px solid var(--primary);
+            background: rgba(13, 17, 23, 0.8);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
             padding: 24px;
-            box-shadow: 0 0 15px rgba(62,207,142,0.2);
-            transition: all 0.2s;
+            box-shadow: 0 0 15px rgba(62, 207, 142, 0.2);
+            transition: all 0.2s ease;
             cursor: pointer;
             position: relative;
         }
@@ -495,59 +512,40 @@
             left: 0;
             width: 4px;
             height: 100%;
-            background: var(--primary);
-            box-shadow: 0 0 10px var(--primary);
+            background: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
         }
 
         .study-sheet-card:hover {
             transform: translateX(4px);
             border-color: var(--primary-light);
-            box-shadow: 0 0 25px rgba(62,207,142,0.4);
+            box-shadow: 0 0 25px rgba(62, 207, 142, 0.4);
+            background: rgba(13, 17, 23, 0.95);
         }
 
-        .sheet-actions {
-            position: absolute;
-            top: 12px;
-            right: 12px;
+        .sheet-header {
             display: flex;
-            gap: 8px;
-            z-index: 10;
-        }
-
-        .icon-btn {
-            background: rgba(0,0,0,0.7);
-            border: 1px solid var(--primary);
-            color: var(--primary);
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 16px;
-        }
-
-        .icon-btn:hover, .icon-btn.active {
-            background: var(--primary);
-            color: #000;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 12px;
         }
 
         .sheet-title {
             font-size: 18px;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--primary-color);
             margin-bottom: 8px;
             font-family: 'Courier New', monospace;
-            text-shadow: 0 0 5px rgba(62,207,142,0.3);
+            text-shadow: 0 0 5px rgba(62, 207, 142, 0.3);
         }
 
         .sheet-subject {
             display: inline-block;
             padding: 4px 12px;
             background: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
             font-size: 11px;
             font-weight: 700;
             margin-bottom: 12px;
@@ -568,7 +566,7 @@
         .sheet-meta {
             margin-top: 16px;
             padding-top: 16px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--border-color);
             font-size: 11px;
             color: var(--text-secondary);
             font-family: 'Courier New', monospace;
@@ -576,10 +574,65 @@
 
         .sheet-meta::before {
             content: '> ';
-            color: var(--primary);
+            color: var(--primary-color);
         }
 
-        /* Full Sheet View Modal */
+        /* Calendar Section */
+        #calendar {
+            background: var(--surface);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        /* FullCalendar Dark Theme Overrides */
+        .fc {
+            --fc-bg-event-opacity: 1;
+            --fc-border-color: var(--border-color);
+            --fc-button-bg-color: var(--surface-hover);
+            --fc-button-border-color: var(--border-color);
+            --fc-button-text-color: var(--text-primary);
+            --fc-button-hover-bg-color: var(--primary-color);
+            --fc-button-hover-border-color: var(--primary-color);
+            --fc-button-active-bg-color: var(--primary-dark);
+            --fc-button-active-border-color: var(--primary-dark);
+        }
+
+        .fc .fc-toolbar-title {
+            color: var(--text-primary) !important;
+            font-size: 24px !important;
+            font-weight: 600 !important;
+        }
+
+        .fc .fc-col-header-cell {
+            background: var(--background-light) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        .fc .fc-col-header-cell-cushion {
+            color: var(--text-secondary) !important;
+            font-weight: 600 !important;
+        }
+
+        .fc .fc-daygrid-day {
+            background: var(--surface) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        .fc .fc-daygrid-day:hover {
+            background: var(--surface-hover) !important;
+        }
+
+        .fc .fc-daygrid-day-number {
+            color: var(--text-primary) !important;
+        }
+
+        .fc .fc-daygrid-day.fc-day-today {
+            background: rgba(62, 207, 142, 0.1) !important;
+        }
+
+        /* Modal Styles */
         .modal {
             display: none;
             position: fixed;
@@ -587,7 +640,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0, 0, 0, 0.7);
             backdrop-filter: blur(4px);
             z-index: 1000;
             overflow-y: auto;
@@ -602,61 +655,68 @@
 
         .modal-content {
             background: var(--surface);
-            border: 2px solid var(--primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
             width: 100%;
-            max-width: 900px;
+            max-width: 700px;
             max-height: 90vh;
             overflow-y: auto;
-            animation: slideUp 0.3s;
+            animation: slideUp 0.3s ease-out;
+            box-shadow: var(--shadow-lg);
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(50px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .modal-header {
             padding: 24px;
-            border-bottom: 2px solid var(--primary);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(0,0,0,0.5);
         }
 
         .modal-header h3 {
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary);
-            font-family: 'Courier New', monospace;
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
         }
 
         .btn-close {
             background: none;
             border: none;
-            font-size: 32px;
+            font-size: 24px;
             cursor: pointer;
             color: var(--text-secondary);
-            width: 40px;
-            height: 40px;
+            width: 32px;
+            height: 32px;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
 
         .btn-close:hover {
-            color: var(--primary);
-            transform: rotate(90deg);
+            background: var(--surface-hover);
+            color: var(--text-primary);
         }
 
         .modal-body {
-            padding: 32px;
+            padding: 24px;
         }
 
         .modal-footer {
             padding: 24px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--border-color);
             display: flex;
             justify-content: flex-end;
             gap: 12px;
@@ -666,44 +726,60 @@
             padding: 10px 20px;
             background: transparent;
             color: var(--text-secondary);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Courier New', monospace;
-            text-transform: uppercase;
+            transition: all 0.2s ease;
         }
 
         .btn-secondary:hover {
-            border-color: var(--primary);
-            color: var(--primary);
+            background: var(--surface-hover);
+            border-color: var(--text-secondary);
+            color: var(--text-primary);
         }
 
-        /* Sheet View Content Styling */
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 12px 16px;
+            background: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            resize: vertical;
+            transition: all 0.2s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(62, 207, 142, 0.1);
+        }
+
+        textarea::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* Sheet View Modal */
         .sheet-view-content {
             line-height: 1.8;
-            color: var(--text);
-            font-size: 16px;
+            color: var(--text-primary);
+        }
+
+        .sheet-view-content h1,
+        .sheet-view-content h2,
+        .sheet-view-content h3 {
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
         }
 
         .sheet-view-content h1 {
-            color: var(--primary);
-            font-size: 32px;
-            margin: 24px 0 16px;
-            text-shadow: 0 0 10px rgba(62,207,142,0.3);
-        }
-
-        .sheet-view-content h2 {
-            color: var(--primary-light);
-            font-size: 26px;
-            margin: 20px 0 12px;
-        }
-
-        .sheet-view-content h3 {
-            color: var(--text);
-            font-size: 20px;
-            margin: 16px 0 10px;
+            color: var(--primary-color);
         }
 
         .sheet-view-content p {
@@ -712,22 +788,21 @@
         }
 
         .sheet-view-content code {
-            background: rgba(62,207,142,0.1);
-            border: 1px solid var(--primary);
-            padding: 2px 8px;
+            background: var(--background-light);
+            border: 1px solid var(--border-color);
+            padding: 2px 6px;
             border-radius: 4px;
-            font-family: 'Courier New', monospace;
-            color: var(--primary);
-            font-size: 14px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            color: var(--primary-color);
         }
 
         .sheet-view-content pre {
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--primary);
-            padding: 20px;
-            border-radius: 8px;
+            background: var(--background-light);
+            border: 1px solid var(--border-color);
+            padding: 16px;
+            border-radius: 6px;
             overflow-x: auto;
-            margin: 20px 0;
+            margin-bottom: 16px;
         }
 
         .sheet-view-content pre code {
@@ -736,189 +811,27 @@
             padding: 0;
         }
 
-        .sheet-view-content ul, .sheet-view-content ol {
-            margin-left: 32px;
+        .sheet-view-content ul,
+        .sheet-view-content ol {
+            margin-left: 24px;
             margin-bottom: 16px;
             color: var(--text-secondary);
         }
 
-        .sheet-view-content li {
-            margin-bottom: 8px;
-        }
-
         .sheet-view-content strong {
-            color: var(--primary);
-            font-weight: 700;
-        }
-
-        .sheet-view-content em {
-            color: var(--primary-light);
+            color: var(--text-primary);
         }
 
         .sheet-view-content a {
-            color: var(--primary);
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .sheet-view-content a:hover {
             text-decoration: underline;
         }
 
-        .sheet-view-content blockquote {
-            border-left: 4px solid var(--primary);
-            padding-left: 20px;
-            margin: 20px 0;
-            color: var(--text-secondary);
-            font-style: italic;
-        }
-
-        /* Timer */
-        .pomodoro-timer {
-            max-width: 500px;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .timer-display {
-            font-size: 96px;
-            font-family: 'Courier New', monospace;
-            color: var(--primary);
-            text-shadow: 0 0 20px rgba(62,207,142,0.5);
-            margin: 48px 0;
-            animation: glow 2s infinite;
-        }
-
-        .timer-controls {
-            display: flex;
-            gap: 16px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        /* Calendar */
-        #calendar {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            padding: 24px;
-            border-radius: 8px;
-        }
-
-        .fc {
-            --fc-border-color: var(--border);
-            --fc-button-bg-color: var(--surface-hover);
-            --fc-button-border-color: var(--border);
-            --fc-button-text-color: var(--text);
-            --fc-button-hover-bg-color: var(--primary);
-            --fc-button-hover-border-color: var(--primary);
-        }
-
-        .fc .fc-toolbar-title {
-            color: var(--primary) !important;
-            font-size: 24px !important;
-            font-weight: 700 !important;
-            font-family: 'Courier New', monospace !important;
-        }
-
-        .fc .fc-daygrid-day {
-            background: var(--surface) !important;
-            border-color: var(--border) !important;
-        }
-
-        .fc .fc-daygrid-day-number {
-            color: var(--text) !important;
-        }
-
-        .fc .fc-daygrid-day.fc-day-today {
-            background: rgba(62,207,142,0.1) !important;
-        }
-
-        /* Quiz */
-        .quiz-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .quiz-card {
-            background: rgba(13,17,23,0.9);
-            border: 2px solid var(--primary);
-            padding: 32px;
-            margin-bottom: 24px;
-        }
-
-        .quiz-question {
-            font-size: 20px;
-            color: var(--primary);
-            margin-bottom: 24px;
-            font-family: 'Courier New', monospace;
-        }
-
-        .quiz-options {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .quiz-option {
-            padding: 16px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--border);
-            color: var(--text);
-            cursor: pointer;
-            transition: all 0.2s;
-            font-family: 'Courier New', monospace;
-        }
-
-        .quiz-option:hover {
-            border-color: var(--primary);
-            background: rgba(62,207,142,0.1);
-        }
-
-        .quiz-option.correct {
-            border-color: var(--success);
-            background: rgba(16,185,129,0.2);
-        }
-
-        .quiz-option.incorrect {
-            border-color: var(--danger);
-            background: rgba(240,73,73,0.2);
-        }
-
-        .quiz-result {
-            margin-top: 24px;
-            padding: 20px;
-            background: rgba(62,207,142,0.1);
-            border: 1px solid var(--primary);
-            text-align: center;
-            font-family: 'Courier New', monospace;
-        }
-
-        .quiz-score {
-            font-size: 48px;
-            color: var(--primary);
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        /* Inputs */
-        textarea, input[type="text"], input[type="number"], input[type="date"], input[type="datetime-local"], select {
-            width: 100%;
-            padding: 12px 16px;
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--border);
-            color: var(--text);
-            font-size: 14px;
-            font-family: 'Courier New', monospace;
-            transition: all 0.2s;
-        }
-
-        textarea {
-            min-height: 200px;
-            resize: vertical;
-        }
-
-        textarea:focus, input:focus, select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 10px rgba(62,207,142,0.3);
-        }
-
-        /* Responsive */
+        /* Responsive Design */
         @media (max-width: 768px) {
             .navbar-content {
                 flex-direction: column;
@@ -933,35 +846,98 @@
                 grid-template-columns: 1fr;
             }
 
-            .timer-display {
-                font-size: 64px;
+            .section-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
             }
         }
 
+        /* Loading Spinner */
         .loading {
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(62,207,142,0.3);
+            border: 3px solid rgba(62, 207, 142, 0.3);
             border-radius: 50%;
-            border-top-color: var(--primary);
-            animation: spin 1s infinite;
+            border-top-color: var(--primary-color);
+            animation: spin 1s ease-in-out infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
+        .read-only-notice {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: #fbbf24;
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 24px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .event-form-group {
+            margin-bottom: 20px;
+        }
+
+        .event-form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .event-form-group input,
+        .event-form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--background-light);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .event-form-group input:focus,
+        .event-form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(62, 207, 142, 0.1);
+        }
+
+        .event-form-group input::placeholder,
+        .event-form-group select option {
+            color: var(--text-secondary);
+        }
+
+        .event-form-group select {
+            cursor: pointer;
+        }
+
+        .event-form-group select option {
+            background: var(--background-light);
+            color: var(--text-primary);
+        }
+
+        /* About Website Button */
         .about-btn {
             margin-top: 16px;
             padding: 8px 16px;
             background: transparent;
-            color: var(--primary);
-            border: 1px solid var(--primary);
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
             font-size: 11px;
             font-weight: 700;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
             width: 100%;
             font-family: 'Courier New', monospace;
             letter-spacing: 1px;
@@ -969,61 +945,37 @@
         }
 
         .about-btn:hover {
-            background: var(--primary);
+            background: var(--primary-color);
             color: #000;
+            box-shadow: 0 0 15px rgba(62, 207, 142, 0.5);
         }
 
         .about-content {
-            background: rgba(0,0,0,0.5);
-            border: 1px solid var(--primary);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary-color);
+            border-radius: 0;
             padding: 20px;
             margin-top: 20px;
             line-height: 1.8;
             color: var(--text-secondary);
             font-size: 13px;
+            text-align: left;
             font-family: 'Courier New', monospace;
         }
 
         .about-content::before {
             content: '> SYSTEM INFO:\A';
-            color: var(--primary);
+            color: var(--primary-color);
             font-weight: 700;
             white-space: pre;
-        }
-
-        .stat-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-        }
-
-        .stat-card {
-            background: rgba(13,17,23,0.9);
-            border: 1px solid var(--border);
-            padding: 20px;
-            text-align: center;
-        }
-
-        .stat-value {
-            font-size: 36px;
-            color: var(--primary);
-            font-weight: 700;
-            font-family: 'Courier New', monospace;
-        }
-
-        .stat-label {
-            font-size: 12px;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            font-family: 'Courier New', monospace;
-            margin-top: 8px;
         }
     </style>
 </head>
 <body>
+    <!-- Matrix Rain Background -->
     <canvas id="matrix-bg"></canvas>
     
-    <!-- Login -->
+    <!-- Login Page -->
     <div id="loginPage" class="login-container">
         <div class="login-card">
             <div class="login-header">
@@ -1044,19 +996,23 @@
                     <input type="password" id="password" required minlength="6">
                 </div>
                 
-                <button type="submit" class="btn btn-primary" id="authBtn">Sign In</button>
+                <button type="submit" class="btn btn-primary" id="authBtn">
+                    Sign In
+                </button>
             </form>
             
             <div style="text-align: center; margin-top: 20px;">
                 <p style="color: var(--text-secondary); font-size: 14px;">
                     <span id="toggleAuthText">Don't have an account?</span>
-                    <button type="button" id="toggleAuthMode" style="background: none; border: none; color: var(--primary); font-weight: 600; cursor: pointer; text-decoration: underline;">
+                    <button type="button" id="toggleAuthMode" style="background: none; border: none; color: var(--primary-color); font-weight: 600; cursor: pointer; text-decoration: underline;">
                         Sign Up
                     </button>
                 </p>
             </div>
             
-            <button type="button" class="about-btn" id="aboutWebsiteBtn">About Website</button>
+            <button type="button" class="about-btn" id="aboutWebsiteBtn">
+                About Website
+            </button>
             
             <div id="aboutContent" class="about-content" style="display: none;">
                 I was sick of manually using my planner, so here this is. I can also access all my study stuff easily and thats cool! I love being able to access everything in 1 place tbh. i hope whoever reads this has a good life!!
@@ -1066,6 +1022,7 @@
 
     <!-- Main App -->
     <div id="appContainer" class="app-container">
+        <!-- Navbar -->
         <nav class="navbar">
             <div class="navbar-content">
                 <div class="navbar-brand">📚 Kenneth's Study Hub</div>
@@ -1079,112 +1036,42 @@
             </div>
         </nav>
 
+        <!-- Main Content -->
         <main class="main-content">
+            <!-- Tabs -->
             <div class="tabs">
-                <button class="tab active" data-tab="study-sheets">Sheets</button>
-                <button class="tab" data-tab="quizzes">Quizzes</button>
-                <button class="tab" data-tab="flashcards">Flashcards</button>
+                <button class="tab active" data-tab="study-sheets">Study Sheets</button>
                 <button class="tab" data-tab="calendar">Calendar</button>
-                <button class="tab" data-tab="pomodoro">Timer</button>
-                <button class="tab" data-tab="progress">Progress</button>
-                <button class="tab" data-tab="goals">Goals</button>
             </div>
 
-            <!-- Study Sheets -->
+            <!-- Study Sheets Tab -->
             <div id="study-sheets" class="tab-content active">
+                <div id="readOnlyNotice" class="read-only-notice" style="display: none;">
+                    ℹ️ You have read-only access. Only admins can create or edit study sheets.
+                </div>
+                
                 <div class="section-header">
                     <h2>Study Sheets</h2>
-                    <div class="header-actions">
-                        <div class="filter-buttons">
-                            <button class="filter-btn active" data-filter="all">All</button>
-                            <button class="filter-btn" data-filter="favorites">⭐ Favorites</button>
-                            <button class="filter-btn" data-filter="marked">🔖 Marked</button>
-                        </div>
-                        <button class="btn-add" id="addSheetBtn" style="display: none;">+ New Sheet</button>
-                    </div>
+                    <button class="btn-add" id="addSheetBtn" style="display: none;">+ New Sheet</button>
                 </div>
-                <div class="study-sheets-grid" id="studySheetsGrid"></div>
-            </div>
-
-            <!-- Quizzes -->
-            <div id="quizzes" class="tab-content">
-                <div class="section-header">
-                    <h2>Auto-Generated Quizzes</h2>
-                </div>
-                <div class="quiz-container">
-                    <div id="quizSelection">
-                        <p style="text-align: center; color: var(--text-secondary); margin-bottom: 24px;">Select a study sheet to generate a quiz</p>
-                        <div id="quizSheetSelector"></div>
-                    </div>
-                    <div id="quizActive" style="display: none;"></div>
+                
+                <div class="study-sheets-grid" id="studySheetsGrid">
+                    <!-- Study sheets will be loaded here -->
                 </div>
             </div>
 
-            <!-- Flashcards -->
-            <div id="flashcards" class="tab-content">
-                <div class="section-header">
-                    <h2>Flashcards</h2>
-                    <button class="btn-add" id="addFlashcardBtn" style="display: none;">+ New Deck</button>
-                </div>
-                <div id="flashcardContainer"></div>
-            </div>
-
-            <!-- Calendar -->
+            <!-- Calendar Tab -->
             <div id="calendar-tab" class="tab-content">
+                <div id="calendarReadOnlyNotice" class="read-only-notice" style="display: none;">
+                    ℹ️ You have read-only access. Only admins can create or edit calendar events.
+                </div>
+                
                 <div id="calendar"></div>
-            </div>
-
-            <!-- Pomodoro -->
-            <div id="pomodoro" class="tab-content">
-                <div class="pomodoro-timer">
-                    <h2 style="text-align: center; margin-bottom: 24px;">Pomodoro Timer</h2>
-                    <div class="timer-display" id="timerDisplay">25:00</div>
-                    <div class="timer-controls">
-                        <button class="btn-action" id="startTimerBtn">Start</button>
-                        <button class="btn-action" id="pauseTimerBtn">Pause</button>
-                        <button class="btn-action" id="resetTimerBtn">Reset</button>
-                    </div>
-                    <p style="text-align: center; margin-top: 24px; color: var(--text-secondary); font-family: 'Courier New', monospace;">
-                        25 min work • 5 min break
-                    </p>
-                </div>
-            </div>
-
-            <!-- Progress -->
-            <div id="progress" class="tab-content">
-                <h2 style="margin-bottom: 24px;">Your Progress</h2>
-                <div class="stat-grid">
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalSheets">0</div>
-                        <div class="stat-label">Study Sheets</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="totalQuizzes">0</div>
-                        <div class="stat-label">Quizzes Taken</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="avgScore">0%</div>
-                        <div class="stat-label">Avg Quiz Score</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="studyHours">0</div>
-                        <div class="stat-label">Study Hours</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Goals -->
-            <div id="goals" class="tab-content">
-                <div class="section-header">
-                    <h2>Study Goals</h2>
-                    <button class="btn-add" id="addGoalBtn" style="display: none;">+ New Goal</button>
-                </div>
-                <div id="goalsList"></div>
             </div>
         </main>
     </div>
 
-    <!-- Sheet Create/Edit Modal -->
+    <!-- Study Sheet Modal (Add/Edit) -->
     <div id="sheetModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1197,27 +1084,30 @@
                         <label for="sheetTitle">Title</label>
                         <input type="text" id="sheetTitle" required>
                     </div>
+                    
                     <div class="form-group">
                         <label for="sheetSubject">Subject</label>
-                        <input type="text" id="sheetSubject" required>
+                        <input type="text" id="sheetSubject" required placeholder="e.g., Mathematics, Biology, History">
                     </div>
+                    
                     <div class="form-group">
-                        <label for="sheetContent">Content (Markdown)</label>
+                        <label for="sheetContent">Content (Markdown supported)</label>
                         <textarea id="sheetContent" required placeholder="# Heading
 ## Subheading
-**Bold** *Italic*
-- List item"></textarea>
+- Bullet point
+**Bold text**
+*Italic text*"></textarea>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancelSheetBtn">Cancel</button>
-                <button class="btn btn-primary" id="saveSheetBtn">Save</button>
+                <button class="btn btn-primary" id="saveSheetBtn">Save Sheet</button>
             </div>
         </div>
     </div>
 
-    <!-- Sheet View Modal -->
+    <!-- Study Sheet View Modal -->
     <div id="viewSheetModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1225,17 +1115,18 @@
                 <button class="btn-close" id="closeViewSheetModal">&times;</button>
             </div>
             <div class="modal-body">
-                <div id="viewSheetSubject" style="margin-bottom: 24px;"></div>
+                <div id="viewSheetSubject"></div>
                 <div id="viewSheetContent" class="sheet-view-content"></div>
-                <div id="viewSheetMeta" class="sheet-meta" style="margin-top: 32px;"></div>
+                <div id="viewSheetMeta" class="sheet-meta"></div>
             </div>
             <div class="modal-footer">
+                <button class="btn btn-primary" id="editSheetBtn" style="display: none;">Edit</button>
                 <button class="btn btn-secondary" id="closeViewBtn">Close</button>
             </div>
         </div>
     </div>
 
-    <!-- Event Modal -->
+    <!-- Event Modal (Add/Edit) -->
     <div id="eventModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1244,11 +1135,12 @@
             </div>
             <div class="modal-body">
                 <form id="eventForm">
-                    <div class="form-group">
+                    <div class="event-form-group">
                         <label for="eventTitle">Event Title</label>
                         <input type="text" id="eventTitle" required>
                     </div>
-                    <div class="form-group">
+                    
+                    <div class="event-form-group">
                         <label for="eventType">Event Type</label>
                         <select id="eventType" required>
                             <option value="deadline">Study Deadline</option>
@@ -1257,16 +1149,19 @@
                             <option value="other">Other</option>
                         </select>
                     </div>
-                    <div class="form-group">
+                    
+                    <div class="event-form-group">
                         <label for="eventStart">Start Date & Time</label>
                         <input type="datetime-local" id="eventStart" required>
                     </div>
-                    <div class="form-group">
+                    
+                    <div class="event-form-group">
                         <label for="eventEnd">End Date & Time</label>
                         <input type="datetime-local" id="eventEnd">
                     </div>
-                    <div class="form-group">
-                        <label for="eventDescription">Description</label>
+                    
+                    <div class="event-form-group">
+                        <label for="eventDescription">Description (optional)</label>
                         <textarea id="eventDescription" style="min-height: 100px;"></textarea>
                     </div>
                 </form>
@@ -1278,79 +1173,43 @@
         </div>
     </div>
 
-    <!-- Goal Modal -->
-    <div id="goalModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>New Goal</h3>
-                <button class="btn-close" id="closeGoalModal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <form id="goalForm">
-                    <div class="form-group">
-                        <label for="goalText">Goal</label>
-                        <input type="text" id="goalText" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="goalDeadline">Deadline (optional)</label>
-                        <input type="date" id="goalDeadline">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelGoalBtn">Cancel</button>
-                <button class="btn btn-primary" id="saveGoalBtn">Save Goal</button>
-            </div>
-        </div>
-    </div>
-
+    <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, collection, addDoc, getDocs, doc, getDoc, setDoc, updateDoc, deleteDoc, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+        // Your Firebase config
         const firebaseConfig = {
           apiKey: "AIzaSyBoI0n09vJ7dn0-Jb91m8l4aGtPZYtwGiM",
           authDomain: "usernames-b9488.firebaseapp.com",
           projectId: "usernames-b9488",
           storageBucket: "usernames-b9488.firebasestorage.app",
           messagingSenderId: "902486022937",
-          appId: "1:902486022937:web:b1c0e5df3b9bf3123cc388"
+          appId: "1:902486022937:web:b1c0e5df3b9bf3123cc388",
+          measurementId: "G-HZD5CN8963"
         };
 
+        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // Profanity filter
-        const badWords = ['fuck', 'shit', 'bitch', 'ass', 'damn', 'hell', 'crap', 'dick', 'cock', 'pussy', 'bastard', 'slut', 'whore', 'fag', 'nigger', 'nigga', 'retard'];
-        
-        function filterProfanity(text) {
-            if (!text) return '';
-            let filtered = text;
-            badWords.forEach(word => {
-                const regex = new RegExp(word, 'gi');
-                filtered = filtered.replace(regex, '***');
-            });
-            return filtered;
-        }
-
-        // Global state
+        // Global State
         let currentUser = null;
         let isAdmin = false;
         let calendar = null;
+        let currentEditingSheet = null;
+        let currentEditingEvent = null;
         let isSignupMode = false;
-        let currentFilter = 'all';
-        let pomodoroInterval = null;
-        let pomodoroSeconds = 1500;
-        let isPomodoroRunning = false;
 
+        // Initialize App
         document.addEventListener('DOMContentLoaded', () => {
             setupAuthListener();
             setupEventListeners();
-            setupFilterButtons();
         });
 
+        // Auth Listener
         function setupAuthListener() {
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
@@ -1358,6 +1217,8 @@
                     await loadUserProfile();
                     showApp();
                 } else {
+                    currentUser = null;
+                    isAdmin = false;
                     showLogin();
                 }
             });
@@ -1369,6 +1230,7 @@
             if (userDoc.exists()) {
                 isAdmin = userDoc.data().is_admin || false;
             } else {
+                // Create user profile if it doesn't exist
                 await setDoc(doc(db, 'users', currentUser.uid), {
                     email: currentUser.email,
                     is_admin: false,
@@ -1387,10 +1249,12 @@
             if (isAdmin) {
                 roleElement.innerHTML = '<span class="admin-badge">ADMIN</span>';
                 document.getElementById('addSheetBtn').style.display = 'block';
-                document.getElementById('addFlashcardBtn').style.display = 'block';
-                document.getElementById('addGoalBtn').style.display = 'block';
+                document.getElementById('readOnlyNotice').style.display = 'none';
+                document.getElementById('calendarReadOnlyNotice').style.display = 'none';
             } else {
-                roleElement.textContent = 'Student';
+                roleElement.textContent = 'Student (Read-Only)';
+                document.getElementById('readOnlyNotice').style.display = 'flex';
+                document.getElementById('calendarReadOnlyNotice').style.display = 'flex';
             }
         }
 
@@ -1403,80 +1267,62 @@
             document.getElementById('loginPage').style.display = 'none';
             document.getElementById('appContainer').classList.add('show');
             loadStudySheets();
-            loadStats();
-            loadGoals();
+            initCalendar();
         }
 
+        // Event Listeners
         function setupEventListeners() {
             document.getElementById('authForm').addEventListener('submit', handleAuth);
             document.getElementById('toggleAuthMode').addEventListener('click', toggleAuthMode);
             document.getElementById('aboutWebsiteBtn').addEventListener('click', toggleAboutContent);
-            document.getElementById('logoutBtn').addEventListener('click', () => signOut(auth));
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
 
             document.querySelectorAll('.tab').forEach(tab => {
                 tab.addEventListener('click', () => switchTab(tab.dataset.tab));
             });
 
-            document.getElementById('addSheetBtn').addEventListener('click', openSheetModal);
+            document.getElementById('addSheetBtn').addEventListener('click', () => openSheetModal());
             document.getElementById('closeSheetModal').addEventListener('click', closeSheetModal);
             document.getElementById('cancelSheetBtn').addEventListener('click', closeSheetModal);
             document.getElementById('saveSheetBtn').addEventListener('click', saveStudySheet);
+            
+            document.getElementById('closeViewSheetModal').addEventListener('click', closeViewSheetModal);
+            document.getElementById('closeViewBtn').addEventListener('click', closeViewSheetModal);
+            document.getElementById('editSheetBtn').addEventListener('click', editCurrentSheet);
 
-            document.getElementById('closeViewSheetModal').addEventListener('click', () => document.getElementById('viewSheetModal').classList.remove('show'));
-            document.getElementById('closeViewBtn').addEventListener('click', () => document.getElementById('viewSheetModal').classList.remove('show'));
-
-            document.getElementById('startTimerBtn').addEventListener('click', startPomodoro);
-            document.getElementById('pauseTimerBtn').addEventListener('click', pausePomodoro);
-            document.getElementById('resetTimerBtn').addEventListener('click', resetPomodoro);
-
-            document.getElementById('closeEventModal').addEventListener('click', () => document.getElementById('eventModal').classList.remove('show'));
-            document.getElementById('cancelEventBtn').addEventListener('click', () => document.getElementById('eventModal').classList.remove('show'));
+            document.getElementById('closeEventModal').addEventListener('click', closeEventModal);
+            document.getElementById('cancelEventBtn').addEventListener('click', closeEventModal);
             document.getElementById('saveEventBtn').addEventListener('click', saveCalendarEvent);
-
-            document.getElementById('addGoalBtn').addEventListener('click', () => document.getElementById('goalModal').classList.add('show'));
-            document.getElementById('closeGoalModal').addEventListener('click', () => document.getElementById('goalModal').classList.remove('show'));
-            document.getElementById('cancelGoalBtn').addEventListener('click', () => document.getElementById('goalModal').classList.remove('show'));
-            document.getElementById('saveGoalBtn').addEventListener('click', saveGoal);
-        }
-
-        function setupFilterButtons() {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentFilter = btn.dataset.filter;
-                    loadStudySheets();
-                });
-            });
         }
 
         function toggleAboutContent() {
-            const content = document.getElementById('aboutContent');
-            const btn = document.getElementById('aboutWebsiteBtn');
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                btn.textContent = 'Hide About';
+            const aboutContent = document.getElementById('aboutContent');
+            const aboutBtn = document.getElementById('aboutWebsiteBtn');
+            
+            if (aboutContent.style.display === 'none') {
+                aboutContent.style.display = 'block';
+                aboutBtn.textContent = 'Hide About';
             } else {
-                content.style.display = 'none';
-                btn.textContent = 'About Website';
+                aboutContent.style.display = 'none';
+                aboutBtn.textContent = 'About Website';
             }
         }
 
         function toggleAuthMode() {
             isSignupMode = !isSignupMode;
             const authBtn = document.getElementById('authBtn');
-            const subtitle = document.getElementById('authSubtitle');
+            const authSubtitle = document.getElementById('authSubtitle');
             const toggleText = document.getElementById('toggleAuthText');
             const toggleBtn = document.getElementById('toggleAuthMode');
             
             if (isSignupMode) {
                 authBtn.textContent = 'Sign Up';
-                subtitle.textContent = 'Create your account to get started';
+                authSubtitle.textContent = 'Create your account to get started';
                 toggleText.textContent = 'Already have an account?';
                 toggleBtn.textContent = 'Sign In';
             } else {
                 authBtn.textContent = 'Sign In';
-                subtitle.textContent = 'Sign in to access your study materials';
+                authSubtitle.textContent = 'Sign in to access your study materials';
                 toggleText.textContent = "Don't have an account?";
                 toggleBtn.textContent = 'Sign Up';
             }
@@ -1510,19 +1356,23 @@
             }
         }
 
+        async function handleLogout() {
+            await signOut(auth);
+        }
+
         function switchTab(tabName) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
             document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-            document.getElementById(tabName === 'study-sheets' ? 'study-sheets' : tabName).classList.add('active');
+            document.getElementById(tabName === 'study-sheets' ? 'study-sheets' : 'calendar-tab').classList.add('active');
             
-            if (tabName === 'calendar' && !calendar) {
-                initCalendar();
+            if (tabName === 'calendar' && calendar) {
+                setTimeout(() => calendar.updateSize(), 100);
             }
         }
 
-        // Study Sheets
+        // Study Sheets Functions
         async function loadStudySheets() {
             const q = query(collection(db, 'study_sheets'), orderBy('created_at', 'desc'));
             const querySnapshot = await getDocs(q);
@@ -1532,35 +1382,27 @@
                 sheets.push({ id: doc.id, ...doc.data() });
             });
             
-            let filtered = sheets;
-            if (currentFilter === 'favorites') {
-                filtered = sheets.filter(s => s.is_favorite);
-            } else if (currentFilter === 'marked') {
-                filtered = sheets.filter(s => s.is_marked);
-            }
-            
-            renderStudySheets(filtered);
-            renderQuizSelector(sheets);
+            renderStudySheets(sheets);
         }
 
         function renderStudySheets(sheets) {
             const grid = document.getElementById('studySheetsGrid');
             
             if (sheets.length === 0) {
-                grid.innerHTML = '<p style="color: var(--text-secondary); text-align: center; grid-column: 1/-1;">No study sheets yet.</p>';
+                grid.innerHTML = '<p style="color: var(--text-secondary); text-align: center; grid-column: 1/-1;">No study sheets yet. Create your first one!</p>';
                 return;
             }
             
             grid.innerHTML = sheets.map(sheet => `
-                <div class="study-sheet-card" onclick="viewStudySheet('${sheet.id}')">
-                    <div class="sheet-actions" onclick="event.stopPropagation()">
-                        <button class="icon-btn ${sheet.is_favorite ? 'active' : ''}" onclick="toggleFavorite('${sheet.id}', ${!sheet.is_favorite})">⭐</button>
-                        <button class="icon-btn ${sheet.is_marked ? 'active' : ''}" onclick="toggleMarked('${sheet.id}', ${!sheet.is_marked})">🔖</button>
+                <div class="study-sheet-card" onclick="window.viewStudySheet('${sheet.id}')">
+                    <div class="sheet-header">
+                        <div>
+                            <div class="sheet-title">${escapeHtml(sheet.title)}</div>
+                            <span class="sheet-subject">${escapeHtml(sheet.subject)}</span>
+                        </div>
                     </div>
-                    <div class="sheet-title">${filterProfanity(escapeHtml(sheet.title))}</div>
-                    <span class="sheet-subject">${filterProfanity(escapeHtml(sheet.subject))}</span>
                     <div class="sheet-content">
-                        ${filterProfanity(sheet.content.substring(0, 150))}${sheet.content.length > 150 ? '...' : ''}
+                        ${sheet.content.substring(0, 150)}${sheet.content.length > 150 ? '...' : ''}
                     </div>
                     <div class="sheet-meta">
                         Created: ${new Date(sheet.created_at).toLocaleDateString()}
@@ -1569,242 +1411,122 @@
             `).join('');
         }
 
-        window.toggleFavorite = async function(sheetId, isFavorite) {
-            await updateDoc(doc(db, 'study_sheets', sheetId), { is_favorite: isFavorite });
-            loadStudySheets();
-        }
-
-        window.toggleMarked = async function(sheetId, isMarked) {
-            await updateDoc(doc(db, 'study_sheets', sheetId), { is_marked: isMarked });
-            loadStudySheets();
-        }
-
         window.viewStudySheet = async function(sheetId) {
             const docSnap = await getDoc(doc(db, 'study_sheets', sheetId));
-            if (!docSnap.exists()) return;
-            
-            const data = docSnap.data();
-            document.getElementById('viewSheetTitle').textContent = data.title;
-            document.getElementById('viewSheetSubject').innerHTML = `<span class="sheet-subject">${filterProfanity(escapeHtml(data.subject))}</span>`;
-            document.getElementById('viewSheetContent').innerHTML = marked.parse(filterProfanity(data.content));
-            document.getElementById('viewSheetMeta').innerHTML = `Created: ${new Date(data.created_at).toLocaleString()} | Updated: ${new Date(data.updated_at).toLocaleString()}`;
-            document.getElementById('viewSheetModal').classList.add('show');
+
+            if (docSnap.exists()) {
+                const data = { id: docSnap.id, ...docSnap.data() };
+                document.getElementById('viewSheetTitle').textContent = data.title;
+                document.getElementById('viewSheetSubject').innerHTML = `<span class="sheet-subject">${escapeHtml(data.subject)}</span>`;
+                document.getElementById('viewSheetContent').innerHTML = marked.parse(data.content);
+                document.getElementById('viewSheetMeta').innerHTML = `
+                    <strong>Created:</strong> ${new Date(data.created_at).toLocaleString()}<br>
+                    <strong>Last Updated:</strong> ${new Date(data.updated_at).toLocaleString()}
+                `;
+                
+                currentEditingSheet = data;
+                
+                if (isAdmin) {
+                    document.getElementById('editSheetBtn').style.display = 'block';
+                } else {
+                    document.getElementById('editSheetBtn').style.display = 'none';
+                }
+                
+                document.getElementById('viewSheetModal').classList.add('show');
+            }
         }
 
-        function openSheetModal() {
-            document.getElementById('sheetForm').reset();
+        function editCurrentSheet() {
+            closeViewSheetModal();
+            openSheetModal(currentEditingSheet);
+        }
+
+        function openSheetModal(sheet = null) {
+            currentEditingSheet = sheet;
+            
+            if (sheet) {
+                document.getElementById('sheetModalTitle').textContent = 'Edit Study Sheet';
+                document.getElementById('sheetTitle').value = sheet.title;
+                document.getElementById('sheetSubject').value = sheet.subject;
+                document.getElementById('sheetContent').value = sheet.content;
+            } else {
+                document.getElementById('sheetModalTitle').textContent = 'New Study Sheet';
+                document.getElementById('sheetForm').reset();
+            }
+            
             document.getElementById('sheetModal').classList.add('show');
         }
 
         function closeSheetModal() {
             document.getElementById('sheetModal').classList.remove('show');
+            currentEditingSheet = null;
+        }
+
+        function closeViewSheetModal() {
+            document.getElementById('viewSheetModal').classList.remove('show');
+            currentEditingSheet = null;
         }
 
         async function saveStudySheet() {
-            if (!isAdmin) return alert('Only admins can create sheets.');
+            if (!isAdmin) {
+                alert('Only admins can create or edit study sheets.');
+                return;
+            }
 
-            const title = filterProfanity(document.getElementById('sheetTitle').value);
-            const subject = filterProfanity(document.getElementById('sheetSubject').value);
-            const content = filterProfanity(document.getElementById('sheetContent').value);
+            const title = document.getElementById('sheetTitle').value;
+            const subject = document.getElementById('sheetSubject').value;
+            const content = document.getElementById('sheetContent').value;
 
-            await addDoc(collection(db, 'study_sheets'), {
-                title, subject, content,
+            const sheetData = {
+                title,
+                subject,
+                content,
                 author_id: currentUser.uid,
-                created_at: new Date().toISOString(),
-                updated_at: new Date().toISOString(),
-                is_favorite: false,
-                is_marked: false
-            });
+                updated_at: new Date().toISOString()
+            };
 
-            closeSheetModal();
-            loadStudySheets();
-        }
-
-        // Quiz
-        function renderQuizSelector(sheets) {
-            const selector = document.getElementById('quizSheetSelector');
-            if (sheets.length === 0) {
-                selector.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No sheets available</p>';
-                return;
-            }
-            
-            selector.innerHTML = sheets.map(sheet => `
-                <div class="study-sheet-card" onclick="startQuiz('${sheet.id}')">
-                    <div class="sheet-title">${filterProfanity(escapeHtml(sheet.title))}</div>
-                    <div class="sheet-subject">${filterProfanity(escapeHtml(sheet.subject))}</div>
-                </div>
-            `).join('');
-        }
-
-        window.startQuiz = async function(sheetId) {
-            const docSnap = await getDoc(doc(db, 'study_sheets', sheetId));
-            if (!docSnap.exists()) return;
-            
-            const sheet = docSnap.data();
-            const questions = generateQuestions(sheet.content);
-            
-            if (questions.length === 0) {
-                alert('Not enough content to generate quiz.');
-                return;
-            }
-            
-            document.getElementById('quizSelection').style.display = 'none';
-            document.getElementById('quizActive').style.display = 'block';
-            renderQuiz(questions);
-        }
-
-        function generateQuestions(content) {
-            const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 20);
-            const questions = [];
-            
-            for (let i = 0; i < Math.min(5, sentences.length); i++) {
-                const sentence = sentences[i].trim();
-                const words = sentence.split(' ');
-                if (words.length < 5) continue;
-                
-                const blankIndex = Math.floor(Math.random() * (words.length - 2)) + 1;
-                const answer = words[blankIndex].toLowerCase().replace(/[^a-z0-9]/gi, '');
-                const question = words.map((w, idx) => idx === blankIndex ? '____' : w).join(' ');
-                
-                questions.push({
-                    question: question + '?',
-                    answer,
-                    options: generateOptions(answer)
-                });
-            }
-            
-            return questions;
-        }
-
-        function generateOptions(answer) {
-            const options = [answer];
-            const dummyWords = ['important', 'significant', 'crucial', 'essential', 'vital', 'key', 'primary', 'main', 'critical', 'major'];
-            while (options.length < 4) {
-                const dummy = dummyWords[Math.floor(Math.random() * dummyWords.length)];
-                if (!options.includes(dummy)) options.push(dummy);
-            }
-            return options.sort(() => Math.random() - 0.5);
-        }
-
-        function renderQuiz(questions) {
-            let currentQ = 0;
-            let score = 0;
-            const container = document.getElementById('quizActive');
-            
-            function showQuestion() {
-                const q = questions[currentQ];
-                container.innerHTML = `
-                    <div class="quiz-card">
-                        <div style="margin-bottom: 16px; color: var(--text-secondary);">Question ${currentQ + 1}/${questions.length}</div>
-                        <div class="quiz-question">${q.question}</div>
-                        <div class="quiz-options">
-                            ${q.options.map(opt => `
-                                <div class="quiz-option" onclick="selectAnswer(this, '${opt.toLowerCase().replace(/[^a-z0-9]/gi, '')}', '${q.answer}')">${opt}</div>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-            
-            window.selectAnswer = async function(elem, selected, correct) {
-                const isCorrect = selected === correct;
-                if (isCorrect) {
-                    score++;
-                    elem.classList.add('correct');
+            try {
+                if (currentEditingSheet) {
+                    await updateDoc(doc(db, 'study_sheets', currentEditingSheet.id), sheetData);
                 } else {
-                    elem.classList.add('incorrect');
+                    sheetData.created_at = new Date().toISOString();
+                    await addDoc(collection(db, 'study_sheets'), sheetData);
                 }
-                
-                setTimeout(() => {
-                    currentQ++;
-                    if (currentQ < questions.length) {
-                        showQuestion();
-                    } else {
-                        showResults();
-                    }
-                }, 1000);
+                closeSheetModal();
+                loadStudySheets();
+            } catch (error) {
+                alert('Error saving study sheet: ' + error.message);
             }
-            
-            async function showResults() {
-                const percentage = Math.round((score / questions.length) * 100);
-                container.innerHTML = `
-                    <div class="quiz-result">
-                        <div class="quiz-score">${percentage}%</div>
-                        <p>You got ${score} out of ${questions.length} questions correct!</p>
-                        <button class="btn btn-primary" onclick="location.reload()" style="margin-top: 24px;">Back to Quizzes</button>
-                    </div>
-                `;
-                
-                await addDoc(collection(db, 'quiz_results'), {
-                    user_id: currentUser.uid,
-                    score: percentage,
-                    total: questions.length,
-                    correct: score,
-                    created_at: new Date().toISOString()
-                });
-                
-                loadStats();
-            }
-            
-            showQuestion();
         }
 
-        // Timer
-        function startPomodoro() {
-            if (isPomodoroRunning) return;
-            isPomodoroRunning = true;
-            pomodoroInterval = setInterval(() => {
-                pomodoroSeconds--;
-                updateTimerDisplay();
-                if (pomodoroSeconds <= 0) {
-                    pausePomodoro();
-                    alert('Pomodoro complete! Take a break.');
-                    pomodoroSeconds = 1500;
-                    updateTimerDisplay();
-                }
-            }, 1000);
-        }
-
-        function pausePomodoro() {
-            isPomodoroRunning = false;
-            clearInterval(pomodoroInterval);
-        }
-
-        function resetPomodoro() {
-            pausePomodoro();
-            pomodoroSeconds = 1500;
-            updateTimerDisplay();
-        }
-
-        function updateTimerDisplay() {
-            const mins = Math.floor(pomodoroSeconds / 60);
-            const secs = pomodoroSeconds % 60;
-            document.getElementById('timerDisplay').textContent = 
-                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
-
-        // Calendar
+        // Calendar Functions
         function initCalendar() {
             const calendarEl = document.getElementById('calendar');
+            
             calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 headerToolbar: {
                     left: 'prev,next today',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek'
+                    right: 'dayGridMonth,timeGridWeek,listWeek'
                 },
                 editable: isAdmin,
                 selectable: isAdmin,
+                selectMirror: true,
+                dayMaxEvents: true,
                 events: loadCalendarEvents,
                 select: handleDateSelect,
-                eventClick: handleEventClick
+                eventClick: handleEventClick,
+                eventColor: '#4f46e5'
             });
+            
             calendar.render();
         }
 
         async function loadCalendarEvents(info, successCallback, failureCallback) {
             try {
                 const querySnapshot = await getDocs(collection(db, 'calendar_events'));
+                
                 const events = [];
                 querySnapshot.forEach((doc) => {
                     const event = doc.data();
@@ -1813,6 +1535,10 @@
                         title: event.title,
                         start: event.start_date,
                         end: event.end_date,
+                        description: event.description,
+                        extendedProps: {
+                            type: event.event_type
+                        },
                         backgroundColor: getEventColor(event.event_type)
                     });
                 });
@@ -1824,159 +1550,139 @@
 
         function getEventColor(type) {
             const colors = {
-                'exam': '#f04949',
+                'exam': '#ef4444',
                 'deadline': '#f59e0b',
-                'assignment': '#3b82f6',
+                'assignment': '#06b6d4',
                 'other': '#8b5cf6'
             };
-            return colors[type] || '#3ecf8e';
+            return colors[type] || '#4f46e5';
         }
 
         function handleDateSelect(selectInfo) {
             if (!isAdmin) {
-                alert('Only admins can create events.');
+                alert('Only admins can create calendar events.');
                 calendar.unselect();
                 return;
             }
             
-            document.getElementById('eventTitle').value = '';
-            document.getElementById('eventType').value = 'deadline';
+            currentEditingEvent = null;
+            document.getElementById('eventModalTitle').textContent = 'New Event';
+            document.getElementById('eventForm').reset();
             document.getElementById('eventStart').value = selectInfo.startStr.substring(0, 16);
             document.getElementById('eventEnd').value = selectInfo.endStr ? selectInfo.endStr.substring(0, 16) : '';
-            document.getElementById('eventDescription').value = '';
             document.getElementById('eventModal').classList.add('show');
+            
             calendar.unselect();
         }
 
         function handleEventClick(clickInfo) {
-            if (!isAdmin) return;
-            if (confirm(`Delete "${clickInfo.event.title}"?`)) {
-                deleteCalendarEvent(clickInfo.event.id);
-                clickInfo.event.remove();
+            if (!isAdmin) {
+                alert(`${clickInfo.event.title}\n\n${clickInfo.event.extendedProps.description || 'No description'}`);
+                return;
+            }
+
+            if (confirm(`Edit or delete "${clickInfo.event.title}"?\n\nOK to edit, Cancel to delete`)) {
+                currentEditingEvent = clickInfo.event;
+                document.getElementById('eventModalTitle').textContent = 'Edit Event';
+                document.getElementById('eventTitle').value = clickInfo.event.title;
+                document.getElementById('eventType').value = clickInfo.event.extendedProps.type;
+                document.getElementById('eventStart').value = clickInfo.event.startStr.substring(0, 16);
+                document.getElementById('eventEnd').value = clickInfo.event.end ? clickInfo.event.endStr.substring(0, 16) : '';
+                document.getElementById('eventDescription').value = clickInfo.event.extendedProps.description || '';
+                document.getElementById('eventModal').classList.add('show');
+            } else {
+                deleteCalendarEvent(clickInfo.event);
             }
         }
 
         async function saveCalendarEvent() {
-            if (!isAdmin) return alert('Only admins can create events.');
+            if (!isAdmin) {
+                alert('Only admins can create or edit calendar events.');
+                return;
+            }
 
-            const title = filterProfanity(document.getElementById('eventTitle').value);
+            const title = document.getElementById('eventTitle').value;
             const type = document.getElementById('eventType').value;
             const start = document.getElementById('eventStart').value;
             const end = document.getElementById('eventEnd').value;
-            const description = filterProfanity(document.getElementById('eventDescription').value);
+            const description = document.getElementById('eventDescription').value;
 
-            await addDoc(collection(db, 'calendar_events'), {
-                title, event_type: type,
+            const eventData = {
+                title,
+                event_type: type,
                 start_date: start,
                 end_date: end || start,
                 description,
                 author_id: currentUser.uid
-            });
+            };
 
-            document.getElementById('eventModal').classList.remove('show');
-            if (calendar) calendar.refetchEvents();
-        }
-
-        async function deleteCalendarEvent(eventId) {
-            await deleteDoc(doc(db, 'calendar_events', eventId));
-        }
-
-        // Goals
-        async function saveGoal() {
-            const goalText = filterProfanity(document.getElementById('goalText').value);
-            const deadline = document.getElementById('goalDeadline').value;
-            
-            await addDoc(collection(db, 'goals'), {
-                user_id: currentUser.uid,
-                text: goalText,
-                deadline: deadline || null,
-                completed: false,
-                created_at: new Date().toISOString()
-            });
-            
-            document.getElementById('goalModal').classList.remove('show');
-            loadGoals();
-        }
-
-        async function loadGoals() {
-            const q = query(collection(db, 'goals'), where('user_id', '==', currentUser.uid), orderBy('created_at', 'desc'));
-            const querySnapshot = await getDocs(q);
-            const goals = [];
-            querySnapshot.forEach((doc) => {
-                goals.push({ id: doc.id, ...doc.data() });
-            });
-            
-            const container = document.getElementById('goalsList');
-            if (goals.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--text-secondary);">No goals yet</p>';
-                return;
+            try {
+                if (currentEditingEvent) {
+                    await updateDoc(doc(db, 'calendar_events', currentEditingEvent.id), eventData);
+                } else {
+                    await addDoc(collection(db, 'calendar_events'), eventData);
+                }
+                closeEventModal();
+                calendar.refetchEvents();
+            } catch (error) {
+                alert('Error saving event: ' + error.message);
             }
-            
-            container.innerHTML = goals.map(goal => `
-                <div style="background: rgba(13,17,23,0.9); border: 1px solid var(--border); padding: 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px;">
-                    <input type="checkbox" ${goal.completed ? 'checked' : ''} onchange="toggleGoal('${goal.id}', this.checked)" style="width: 24px; height: 24px; cursor: pointer;">
-                    <div style="flex: 1;">
-                        <div style="color: var(--text); ${goal.completed ? 'text-decoration: line-through; opacity: 0.5;' : ''}">${goal.text}</div>
-                        ${goal.deadline ? `<div style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Due: ${new Date(goal.deadline).toLocaleDateString()}</div>` : ''}
-                    </div>
-                </div>
-            `).join('');
         }
 
-        window.toggleGoal = async function(goalId, completed) {
-            await updateDoc(doc(db, 'goals', goalId), { completed });
-            loadGoals();
+        async function deleteCalendarEvent(event) {
+            try {
+                await deleteDoc(doc(db, 'calendar_events', event.id));
+                event.remove();
+            } catch (error) {
+                alert('Error deleting event: ' + error.message);
+            }
         }
 
-        // Stats
-        async function loadStats() {
-            const sheetsSnap = await getDocs(collection(db, 'study_sheets'));
-            document.getElementById('totalSheets').textContent = sheetsSnap.size;
-            
-            const quizzesQuery = query(collection(db, 'quiz_results'), where('user_id', '==', currentUser.uid));
-            const quizzesSnap = await getDocs(quizzesQuery);
-            document.getElementById('totalQuizzes').textContent = quizzesSnap.size;
-            
-            let totalScore = 0;
-            quizzesSnap.forEach((doc) => {
-                totalScore += doc.data().score;
-            });
-            const avgScore = quizzesSnap.size > 0 ? Math.round(totalScore / quizzesSnap.size) : 0;
-            document.getElementById('avgScore').textContent = avgScore + '%';
-            
-            document.getElementById('studyHours').textContent = Math.floor(Math.random() * 50);
+        function closeEventModal() {
+            document.getElementById('eventModal').classList.remove('show');
+            currentEditingEvent = null;
         }
 
         function escapeHtml(text) {
-            const map = {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;'};
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
             return text.replace(/[&<>"']/g, m => map[m]);
         }
 
-        // Matrix
+        // Matrix Rain Effect
         const canvas = document.getElementById('matrix-bg');
         const ctx = canvas.getContext('2d');
+
         canvas.width = window.innerWidth;
         canvas.height = window.innerHeight;
 
         const matrix = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
         const chars = matrix.split('');
+
         const fontSize = 14;
         const columns = canvas.width / fontSize;
-        const drops = [];
 
+        const drops = [];
         for (let i = 0; i < columns; i++) {
             drops[i] = Math.random() * -100;
         }
 
         function drawMatrix() {
-            ctx.fillStyle = 'rgba(0,0,0,0.05)';
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+
             ctx.fillStyle = '#3ecf8e';
             ctx.font = fontSize + 'px monospace';
 
             for (let i = 0; i < drops.length; i++) {
                 const text = chars[Math.floor(Math.random() * chars.length)];
                 ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
                 if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
                     drops[i] = 0;
                 }
@@ -1985,6 +1691,7 @@
         }
 
         setInterval(drawMatrix, 35);
+
         window.addEventListener('resize', () => {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
