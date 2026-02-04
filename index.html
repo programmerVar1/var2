@@ -1,345 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kenneth's Study Hub | Terminal</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
-    
-    <style>
-        :root {
-            --primary: #3ecf8e;
-            --primary-dark: #2fb87a;
-            --background: #000000;
-            --surface: #0d1117;
-            --text: #f4fffa;
-            --text-dim: #8b9aad;
-            --danger: #f04949;
-            --border: #2d3748;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kenneth's Study Hub | Terminal</title>
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css' rel='stylesheet' />
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
 
-        body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--background);
-            color: var(--text);
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        /* Matrix Rain Background */
-        #matrix-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1; opacity: 0.15;
-        }
-
-        /* Scanline Overlay */
-        body::after {
-            content: "";
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px);
-            pointer-events: none; z-index: 999;
-        }
-
-        /* Auth Screen */
-        .login-container {
-            display: flex; justify-content: center; align-items: center; min-height: 100vh;
-        }
-        .login-card {
-            background: var(--surface);
-            border: 2px solid var(--primary);
-            padding: 40px; width: 100%; max-width: 400px;
-            box-shadow: 0 0 20px rgba(62, 207, 142, 0.2);
-            font-family: 'Courier New', monospace;
-        }
-
-        /* App Layout */
-        .app-container { display: none; }
-        .app-container.show { display: block; }
-
-        nav {
-            background: rgba(0,0,0,0.9);
-            border-bottom: 2px solid var(--primary);
-            padding: 1rem 2rem;
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 100;
-        }
-
-        .main-content { max-width: 1200px; margin: 2rem auto; padding: 0 1rem; }
-
-        /* Tabs */
-        .tabs { display: flex; gap: 10px; margin-bottom: 2rem; border-bottom: 1px solid var(--border); }
-        .tab {
-            padding: 10px 20px; background: none; border: none; color: var(--text-dim);
-            cursor: pointer; font-weight: bold; text-transform: uppercase;
-        }
-        .tab.active { color: var(--primary); border-bottom: 2px solid var(--primary); }
-        .tab-content { display: none; animation: fadeIn 0.3s ease; }
-        .tab-content.active { display: block; }
-
-        /* Flashcard Styles */
-        .flashcard-wrapper {
-            perspective: 1000px; width: 100%; max-width: 500px; height: 300px; margin: 2rem auto;
-        }
-        .flashcard {
-            position: relative; width: 100%; height: 100%;
-            transition: transform 0.6s; transform-style: preserve-3d; cursor: pointer;
-        }
-        .flashcard.flipped { transform: rotateY(180deg); }
-        .card-front, .card-back {
-            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
-            display: flex; align-items: center; justify-content: center;
-            padding: 2rem; border: 2px solid var(--primary); background: var(--surface);
-            font-size: 1.5rem; text-align: center;
-        }
-        .card-back { transform: rotateY(180deg); background: var(--primary); color: #000; }
-
-        /* Quiz Styles */
-        .quiz-item {
-            background: var(--surface); border: 1px solid var(--border);
-            padding: 20px; margin-bottom: 1rem; border-left: 4px solid var(--primary);
-        }
-        .option-btn {
-            display: block; width: 100%; padding: 10px; margin-top: 5px;
-            background: transparent; border: 1px solid var(--border);
-            color: var(--text); text-align: left; cursor: pointer;
-        }
-        .option-btn:hover { background: rgba(62, 207, 142, 0.1); }
-
-        /* General UI Elements */
-        input, textarea {
-            width: 100%; padding: 12px; margin-top: 5px; margin-bottom: 15px;
-            background: #000; border: 1px solid var(--primary); color: var(--primary);
-            font-family: 'Courier New', monospace;
-        }
-        .btn {
-            background: var(--primary); color: #000; border: none;
-            padding: 10px 20px; font-weight: bold; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-        .btn:hover { background: var(--primary-dark); box-shadow: 0 0 10px var(--primary); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
+<style>
+:root {
+    --primary: #3ecf8e;
+    --primary-dark: #2fb87a;
+    --background: #000000;
+    --surface: #0d1117;
+    --text: #f4fffa;
+    --text-dim: #8b9aad;
+    --danger: #f04949;
+    --border: #2d3748;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Montserrat', sans-serif; background: var(--background); color: var(--text); overflow-x: hidden; min-height: 100vh; }
+#matrix-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.15; }
+body::after { content: ""; position: fixed; top:0; left:0; width:100%; height:100%; background: repeating-linear-gradient(0deg, rgba(0,0,0,0.1) 0px, rgba(0,0,0,0.1) 1px, transparent 1px, transparent 2px); pointer-events: none; z-index: 999; }
+.login-container { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+.login-card { background: var(--surface); border: 2px solid var(--primary); padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 0 20px rgba(62, 207, 142, 0.2); font-family: 'Courier New', monospace; }
+.app-container { display: none; }
+.app-container.show { display: block; }
+nav { background: rgba(0,0,0,0.9); border-bottom: 2px solid var(--primary); padding: 1rem 2rem; display:flex; justify-content:space-between; align-items:center; position: sticky; top:0; z-index:100; }
+.main-content { max-width: 1200px; margin: 2rem auto; padding:0 1rem; }
+.tabs { display:flex; gap:10px; margin-bottom:2rem; border-bottom:1px solid var(--border); }
+.tab { padding:10px 20px; background:none; border:none; color:var(--text-dim); cursor:pointer; font-weight:bold; text-transform:uppercase; }
+.tab.active { color: var(--primary); border-bottom:2px solid var(--primary); }
+.tab-content { display:none; animation: fadeIn 0.3s ease; }
+.tab-content.active { display:block; }
+.flashcard-wrapper { perspective:1000px; width:100%; max-width:500px; height:300px; margin:2rem auto; }
+.flashcard { position:relative; width:100%; height:100%; transition: transform 0.6s; transform-style: preserve-3d; cursor:pointer; }
+.flashcard.flipped { transform: rotateY(180deg); }
+.card-front, .card-back { position:absolute; width:100%; height:100%; backface-visibility:hidden; display:flex; align-items:center; justify-content:center; padding:2rem; border:2px solid var(--primary); background: var(--surface); font-size:1.5rem; text-align:center; }
+.card-back { transform:rotateY(180deg); background: var(--primary); color: #000; }
+.quiz-item { background: var(--surface); border:1px solid var(--border); padding:20px; margin-bottom:1rem; border-left:4px solid var(--primary); }
+.option-btn { display:block; width:100%; padding:10px; margin-top:5px; background:transparent; border:1px solid var(--border); color:var(--text); text-align:left; cursor:pointer; }
+.option-btn:hover { background: rgba(62,207,142,0.1); }
+input, textarea { width:100%; padding:12px; margin-top:5px; margin-bottom:15px; background:#000; border:1px solid var(--primary); color:var(--primary); font-family:'Courier New', monospace; }
+.btn { background: var(--primary); color:#000; border:none; padding:10px 20px; font-weight:bold; cursor:pointer; text-transform:uppercase; letter-spacing:1px; }
+.btn:hover { background: var(--primary-dark); box-shadow:0 0 10px var(--primary); }
+@keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+/* MODAL */
+.modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:1000; }
+.modal { background: var(--surface); padding:30px; border:2px solid var(--primary); max-width:400px; width:90%; text-align:center; animation: fadeIn 0.3s ease; }
+.modal h3 { margin-bottom:1rem; color:var(--primary); }
+.modal textarea { height:150px; resize:none; }
+.modal .btn { margin-top:10px; width:100%; }
+.notification { position:fixed; top:20px; right:20px; background: var(--primary); color:#000; padding:10px 20px; border-radius:5px; box-shadow:0 0 10px var(--primary); opacity:0; transition: opacity 0.3s ease; z-index:1000; }
+.notification.show { opacity:1; }
+</style>
 </head>
 <body>
+<canvas id="matrix-bg"></canvas>
 
-    <canvas id="matrix-bg"></canvas>
+<div id="loginPage" class="login-container">
+    <div class="login-card">
+        <h2 style="color:var(--primary); margin-bottom:1rem;">> SYSTEM ACCESS</h2>
+        <form id="authForm">
+            <label>> USER_EMAIL</label>
+            <input type="email" id="email" required placeholder="name@domain.com">
+            <label>> ACCESS_KEY</label>
+            <input type="password" id="password" required placeholder="******">
+            <button type="submit" class="btn" style="width:100%">Initialize Session</button>
+        </form>
+        <p id="toggleAuthMode" style="margin-top:15px; font-size:12px; cursor:pointer; color:var(--text-dim)">[Toggle Register/Login]</p>
+    </div>
+</div>
 
-    <div id="loginPage" class="login-container">
-        <div class="login-card">
-            <h2 style="color:var(--primary); margin-bottom:1rem;">> SYSTEM ACCESS</h2>
-            <form id="authForm">
-                <label>> USER_EMAIL</label>
-                <input type="email" id="email" required placeholder="name@domain.com">
-                <label>> ACCESS_KEY</label>
-                <input type="password" id="password" required placeholder="******">
-                <button type="submit" class="btn" style="width:100%">Initialize Session</button>
-            </form>
-            <p id="toggleAuthMode" style="margin-top:15px; font-size:12px; cursor:pointer; color:var(--text-dim)">
-                [Toggle Register/Login]
-            </p>
+<div id="appContainer" class="app-container">
+    <nav>
+        <div style="font-weight:bold; color:var(--primary)">📚 KENNETH_HUB_v2.0</div>
+        <div id="userInfo" style="font-size:12px">USER: <span id="userName" style="color:var(--primary)">---</span></div>
+    </nav>
+    <main class="main-content">
+        <div class="tabs">
+            <button class="tab active" data-tab="sheets">Study Sheets</button>
+            <button class="tab" data-tab="cards">Flashcards</button>
+            <button class="tab" data-tab="quiz">Auto-Quiz</button>
+            <button class="tab" data-tab="calendar-container">Calendar</button>
         </div>
+
+        <div id="sheets" class="tab-content active">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                <h2>Active Modules</h2>
+                <button class="btn" onclick="openNewSheetModal()">+ New Sheet</button>
+            </div>
+            <div id="sheetsGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px;"></div>
+        </div>
+
+        <div id="cards" class="tab-content">
+            <div class="flashcard-wrapper">
+                <div class="flashcard" id="cardElement" onclick="this.classList.toggle('flipped')">
+                    <div class="card-front" id="cardFront">No Cards Loaded</div>
+                    <div class="card-back" id="cardBack">---</div>
+                </div>
+            </div>
+            <div style="text-align:center; margin-top:1rem;">
+                <button class="btn" onclick="prevCard()">PREV</button>
+                <button class="btn" onclick="nextCard()">NEXT</button>
+            </div>
+        </div>
+
+        <div id="quiz" class="tab-content">
+            <div id="quizContainer"></div>
+        </div>
+
+        <div id="calendar-container" class="tab-content">
+            <div id="calendar" style="background:var(--surface); padding:20px; border:1px solid var(--border);"></div>
+        </div>
+    </main>
+</div>
+
+<div class="modal-overlay" id="sheetModal">
+    <div class="modal">
+        <h3>New Study Sheet</h3>
+        <input type="text" id="sheetTitle" placeholder="Sheet Title">
+        <textarea id="sheetContent" placeholder="Use 'A :: B' for cards and 'Q? [A,B] *A' for quiz"></textarea>
+        <button class="btn" onclick="saveNewSheet()">Save Sheet</button>
+        <button class="btn" style="margin-top:5px;background:var(--danger);" onclick="closeModal()">Cancel</button>
     </div>
+</div>
 
-    <div id="appContainer" class="app-container">
-        <nav>
-            <div style="font-weight:bold; color:var(--primary)">📚 KENNETH_HUB_v2.0</div>
-            <div id="userInfo" style="font-size:12px">USER: <span id="userName" style="color:var(--primary)">---</span></div>
-        </nav>
+<div class="notification" id="notification"></div>
 
-        <main class="main-content">
-            <div class="tabs">
-                <button class="tab active" data-tab="sheets">Study Sheets</button>
-                <button class="tab" data-tab="cards">Flashcards</button>
-                <button class="tab" data-tab="quiz">Auto-Quiz</button>
-                <button class="tab" data-tab="calendar-container">Calendar</button>
-            </div>
+<script>
+let studySheets = JSON.parse(localStorage.getItem('studySheets')) || [
+    { id: 1, title: "Biology 101", content: "Mitochondria :: Powerhouse of the cell\nRibosome :: Protein factory\nWho discovered cells? [Newton, Hooke, Darwin] *Hooke" }
+];
+let flashcards = [];
+let quizData = [];
+let currentCardIndex = 0;
 
-            <div id="sheets" class="tab-content active">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-                    <h2>Active Modules</h2>
-                    <button class="btn" onclick="openNewSheetModal()">+ New Sheet</button>
-                </div>
-                <div id="sheetsGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap:20px;">
-                    </div>
-            </div>
-
-            <div id="cards" class="tab-content">
-                <div class="flashcard-wrapper">
-                    <div class="flashcard" id="cardElement" onclick="this.classList.toggle('flipped')">
-                        <div class="card-front" id="cardFront">No Cards Loaded</div>
-                        <div class="card-back" id="cardBack">---</div>
-                    </div>
-                </div>
-                <div style="text-align:center; margin-top:1rem;">
-                    <button class="btn" onclick="prevCard()">PREV</button>
-                    <button class="btn" onclick="nextCard()">NEXT</button>
-                </div>
-            </div>
-
-            <div id="quiz" class="tab-content">
-                <div id="quizContainer">
-                    </div>
-            </div>
-
-            <div id="calendar-container" class="tab-content">
-                <div id="calendar" style="background:var(--surface); padding:20px; border:1px solid var(--border);"></div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        // --- 1. STATE & DATA ---
-        let studySheets = [
-            { id: 1, title: "Biology 101", content: "Mitochondria :: Powerhouse of the cell\nRibosome :: Protein factory\nWho discovered cells? [Newton, Hooke, Darwin] *Hooke" }
-        ];
-        let flashcards = [];
-        let quizData = [];
-        let currentCardIndex = 0;
-
-        // --- 2. MATRIX RAIN ---
-        const canvas = document.getElementById('matrix-bg');
-        const ctx = canvas.getContext('2d');
-        function initMatrix() {
-            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
-            const columns = Math.floor(canvas.width / 14);
-            const drops = Array(columns).fill(1);
-            function draw() {
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.fillStyle = '#3ecf8e'; ctx.font = '14px monospace';
-                drops.forEach((y, i) => {
-                    const text = String.fromCharCode(0x30A0 + Math.random() * 33);
-                    ctx.fillText(text, i * 14, y * 14);
-                    if (y * 14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
-                    drops[i]++;
-                });
-            }
-            setInterval(draw, 35);
-        }
-        initMatrix();
-
-        // --- 3. AUTH LOGIC ---
-        document.getElementById('authForm').onsubmit = (e) => {
-            e.preventDefault();
-            document.getElementById('loginPage').style.display = 'none';
-            document.getElementById('appContainer').classList.add('show');
-            document.getElementById('userName').innerText = document.getElementById('email').value.toUpperCase();
-            initCalendar();
-            renderSheets();
-        };
-
-        // --- 4. TABS ---
-        document.querySelectorAll('.tab').forEach(button => {
-            button.onclick = () => {
-                document.querySelectorAll('.tab, .tab-content').forEach(el => el.classList.remove('active'));
-                button.classList.add('active');
-                document.getElementById(button.dataset.tab).classList.add('active');
-                if(button.dataset.tab === 'calendar-container') window.dispatchEvent(new Event('resize'));
-            };
+const canvas = document.getElementById('matrix-bg');
+const ctx = canvas.getContext('2d');
+function initMatrix() {
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    const columns = Math.floor(canvas.width / 14);
+    const drops = Array(columns).fill(1);
+    function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#3ecf8e'; ctx.font = '14px monospace';
+        drops.forEach((y, i) => {
+            const text = String.fromCharCode(0x30A0 + Math.random() * 33);
+            ctx.fillText(text, i * 14, y * 14);
+            if(y*14 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+            drops[i]++;
         });
+    }
+    setInterval(draw, 35);
+}
+initMatrix();
 
-        // --- 5. CORE ENGINE: PARSING & TOOLS ---
-        function renderSheets() {
-            const grid = document.getElementById('sheetsGrid');
-            grid.innerHTML = studySheets.map(s => `
-                <div class="quiz-item" style="cursor:pointer" onclick="loadSheetTools(${s.id})">
-                    <h3 style="color:var(--primary)">${s.title}</h3>
-                    <p style="font-size:12px; color:var(--text-dim)">Click to load Flashcards/Quiz</p>
-                </div>
-            `).join('');
-        }
+function notify(msg) { const n = document.getElementById('notification'); n.innerText = msg; n.classList.add('show'); setTimeout(()=>n.classList.remove('show'),2000); }
 
-        function loadSheetTools(id) {
-            const sheet = studySheets.find(s => s.id === id);
-            if(!sheet) return;
-            
-            flashcards = [];
-            quizData = [];
-            const lines = sheet.content.split('\n');
+document.getElementById('authForm').onsubmit = e => { e.preventDefault(); document.getElementById('loginPage').style.display='none'; document.getElementById('appContainer').classList.add('show'); document.getElementById('userName').innerText = document.getElementById('email').value.toUpperCase(); initCalendar(); renderSheets(); };
 
-            lines.forEach(line => {
-                // Flashcard: A :: B
-                if(line.includes('::')) {
-                    const [f, b] = line.split('::');
-                    flashcards.push({ front: f.trim(), back: b.trim() });
-                }
-                // Quiz: Q? [O1, O2] *A
-                if(line.includes('?') && line.includes('[') && line.includes('*')) {
-                    const question = line.split('?')[0] + '?';
-                    const options = line.match(/\[(.*?)\]/)[1].split(',').map(o => o.trim());
-                    const answer = line.split('*')[1].trim();
-                    quizData.push({ question, options, answer });
-                }
-            });
+document.querySelectorAll('.tab').forEach(button=>{ button.onclick=()=>{ document.querySelectorAll('.tab,.tab-content').forEach(el=>el.classList.remove('active')); button.classList.add('active'); document.getElementById(button.dataset.tab).classList.add('active'); if(button.dataset.tab==='calendar-container') window.dispatchEvent(new Event('resize')); }; });
 
-            currentCardIndex = 0;
-            updateFlashcardUI();
-            updateQuizUI();
-            alert(`Loaded: ${flashcards.length} cards and ${quizData.length} questions.`);
-        }
+function renderSheets() {
+    const grid = document.getElementById('sheetsGrid');
+    grid.innerHTML = studySheets.map(s => `<div class="quiz-item" style="cursor:pointer" onclick="loadSheetTools(${s.id})"><h3 style="color:var(--primary)">${s.title}</h3><p style="font-size:12px; color:var(--text-dim)">Click to load Flashcards/Quiz</p></div>`).join('');
+    localStorage.setItem('studySheets', JSON.stringify(studySheets));
+}
 
-        function updateFlashcardUI() {
-            if(flashcards.length === 0) return;
-            document.getElementById('cardFront').innerText = flashcards[currentCardIndex].front;
-            document.getElementById('cardBack').innerText = flashcards[currentCardIndex].back;
-            document.getElementById('cardElement').classList.remove('flipped');
-        }
+function loadSheetTools(id) {
+    const sheet = studySheets.find(s=>s.id===id);
+    if(!sheet) return;
+    flashcards=[]; quizData=[];
+    sheet.content.split('\n').forEach(line=>{
+        if(line.includes('::')){ const [f,b]=line.split('::'); flashcards.push({front:f.trim(),back:b.trim()}); }
+        if(line.includes('?') && line.includes('[') && line.includes('*')){ const question=line.split('?')[0]+'?'; const options=line.match(/\[(.*?)\]/)[1].split(',').map(o=>o.trim()); const answer=line.split('*')[1].trim(); quizData.push({question,options,answer}); }
+    });
+    currentCardIndex=0; updateFlashcardUI(); updateQuizUI(); notify(`Loaded ${flashcards.length} cards & ${quizData.length} questions`);
+}
 
-        window.nextCard = () => { 
-            currentCardIndex = (currentCardIndex + 1) % flashcards.length; 
-            updateFlashcardUI(); 
-        };
-        window.prevCard = () => { 
-            currentCardIndex = (currentCardIndex - 1 + flashcards.length) % flashcards.length; 
-            updateFlashcardUI(); 
-        };
+function updateFlashcardUI(){ if(!flashcards.length) return; document.getElementById('cardFront').innerText=flashcards[currentCardIndex].front; document.getElementById('cardBack').innerText=flashcards[currentCardIndex].back; document.getElementById('cardElement').classList.remove('flipped'); }
+window.nextCard=()=>{ currentCardIndex=(currentCardIndex+1)%flashcards.length; updateFlashcardUI(); };
+window.prevCard=()=>{ currentCardIndex=(currentCardIndex-1+flashcards.length)%flashcards.length; updateFlashcardUI(); };
 
-        function updateQuizUI() {
-            const container = document.getElementById('quizContainer');
-            if(quizData.length === 0) {
-                container.innerHTML = "<p>> No quiz data found in this sheet.</p>";
-                return;
-            }
-            container.innerHTML = quizData.map((q, idx) => `
-                <div class="quiz-item">
-                    <p>${idx+1}. ${q.question}</p>
-                    ${q.options.map(opt => `
-                        <button class="option-btn" onclick="checkAns(this, '${opt}', '${q.answer}')">${opt}</button>
-                    `).join('')}
-                </div>
-            `).join('');
-        }
+function updateQuizUI(){ const container=document.getElementById('quizContainer'); if(!quizData.length){ container.innerHTML='<p>> No quiz data found in this sheet.</p>'; return; } container.innerHTML=quizData.map((q,idx)=>`<div class="quiz-item"><p>${idx+1}. ${q.question}</p>${q.options.map(opt=>`<button class="option-btn" onclick="checkAns(this,'${opt}','${q.answer}')">${opt}</button>`).join('')}</div>`).join(''); }
+window.checkAns=(btn,sel,cor)=>{ btn.disabled=true; btn.style.borderColor=(sel===cor)?'var(--primary)':'var(--danger)'; btn.style.color=(sel===cor)?'var(--primary)':'var(--danger)'; btn.innerText+= (sel===cor)?' [CORRECT]':' [WRONG]'; };
 
-        window.checkAns = (btn, sel, cor) => {
-            btn.style.borderColor = (sel === cor) ? "var(--primary)" : "var(--danger)";
-            btn.style.color = (sel === cor) ? "var(--primary)" : "var(--danger)";
-            btn.innerText += (sel === cor) ? " [CORRECT]" : " [WRONG]";
-        };
+function initCalendar(){ const calendarEl=document.getElementById('calendar'); const calendar=new FullCalendar.Calendar(calendarEl,{initialView:'dayGridMonth',events:[{title:'Exam Day',start:'2026-02-15'}]}); calendar.render(); }
 
-        function initCalendar() {
-            const calendarEl = document.getElementById('calendar');
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth',
-                events: [{ title: 'Exam Day', start: '2026-02-15' }]
-            });
-            calendar.render();
-        }
-
-        function openNewSheetModal() {
-            const title = prompt("Sheet Title:");
-            const content = prompt("Content (Use 'A :: B' for cards and 'Q? [A,B] *A' for quiz):");
-            if(title && content) {
-                studySheets.push({ id: Date.now(), title, content });
-                renderSheets();
-            }
-        }
-    </script>
+function openNewSheetModal(){ document.getElementById('sheetModal').style.display='flex'; }
+function closeModal(){ document.getElementById('sheetModal').style.display='none'; }
+function saveNewSheet(){ const title=document.getElementById('sheetTitle').value.trim(); const content=document.getElementById('sheetContent').value.trim(); if(!title || !content){ notify('Fill out both fields!'); return; } studySheets.push({id:Date.now(),title,content}); renderSheets(); closeModal(); notify('Sheet saved successfully!'); document.getElementById('sheetTitle').value=''; document.getElementById('sheetContent').value=''; }
+</script>
 </body>
 </html>
+
